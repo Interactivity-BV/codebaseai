@@ -1,0 +1,18 @@
+create_reports.py
+    F 177:0 create_report_with_openai - B (8)
+    F 202:0 main - A (2)
+    F 49:0 run_chain - A (1)
+    F 62:0 create_vulture_report - A (1)
+    F 85:0 create_pylint_report - A (1)
+    F 108:0 create_radon_cc_report - A (1)
+    F 131:0 create_radon_mi_report - A (1)
+    F 154:0 create_full_report - A (1)
+analyse_codebase.py
+    F 35:0 run_command - A (4)
+    F 84:0 main - A (2)
+    F 52:0 analyze_with_vulture - A (1)
+    F 61:0 analyze_with_pylint - A (1)
+    F 70:0 analyze_with_radon - A (1)
+
+13 blocks (classes, functions, methods) analyzed.
+Average complexity: A (1.9230769230769231)

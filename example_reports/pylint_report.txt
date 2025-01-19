@@ -1,0 +1,71 @@
+************* Module create_reports
+create_reports.py:13:0: C0301: Line too long (108/100) (line-too-long)
+create_reports.py:14:0: C0301: Line too long (113/100) (line-too-long)
+create_reports.py:15:0: C0301: Line too long (124/100) (line-too-long)
+create_reports.py:16:0: C0301: Line too long (138/100) (line-too-long)
+create_reports.py:55:16: C0303: Trailing whitespace (trailing-whitespace)
+create_reports.py:76:0: C0303: Trailing whitespace (trailing-whitespace)
+create_reports.py:103:47: C0303: Trailing whitespace (trailing-whitespace)
+create_reports.py:149:47: C0303: Trailing whitespace (trailing-whitespace)
+create_reports.py:172:47: C0303: Trailing whitespace (trailing-whitespace)
+create_reports.py:195:97: C0303: Trailing whitespace (trailing-whitespace)
+create_reports.py:215:0: C0304: Final newline missing (missing-final-newline)
+create_reports.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+create_reports.py:62:0: C0116: Missing function or method docstring (missing-function-docstring)
+create_reports.py:79:9: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+create_reports.py:82:4: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+create_reports.py:85:0: C0116: Missing function or method docstring (missing-function-docstring)
+create_reports.py:102:9: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+create_reports.py:105:4: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+create_reports.py:108:0: C0116: Missing function or method docstring (missing-function-docstring)
+create_reports.py:125:9: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+create_reports.py:128:4: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+create_reports.py:131:0: C0116: Missing function or method docstring (missing-function-docstring)
+create_reports.py:148:9: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+create_reports.py:151:4: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+create_reports.py:154:0: C0116: Missing function or method docstring (missing-function-docstring)
+create_reports.py:171:9: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+create_reports.py:174:4: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+create_reports.py:185:8: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+create_reports.py:188:17: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+create_reports.py:200:4: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+create_reports.py:200:16: W1309: Using an f-string that does not have any interpolated variables (f-string-without-interpolation)
+create_reports.py:207:8: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+create_reports.py:210:4: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+create_reports.py:211:4: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+create_reports.py:5:0: C0411: standard import "os" should be placed before third party imports "langchain_core.prompts.ChatPromptTemplate", "langchain_core.output_parsers.StrOutputParser", "langchain_core.runnables.RunnablePassthrough", "langchain_openai.ChatOpenAI" (wrong-import-order)
+create_reports.py:6:0: C0411: standard import "sys" should be placed before third party imports "langchain_core.prompts.ChatPromptTemplate", "langchain_core.output_parsers.StrOutputParser", "langchain_core.runnables.RunnablePassthrough", "langchain_openai.ChatOpenAI" (wrong-import-order)
+create_reports.py:7:0: C0411: standard import "argparse" should be placed before third party imports "langchain_core.prompts.ChatPromptTemplate", "langchain_core.output_parsers.StrOutputParser", "langchain_core.runnables.RunnablePassthrough", "langchain_openai.ChatOpenAI" (wrong-import-order)
+create_reports.py:8:0: C0411: standard import "logging" should be placed before third party imports "langchain_core.prompts.ChatPromptTemplate", "langchain_core.output_parsers.StrOutputParser", "langchain_core.runnables.RunnablePassthrough", "langchain_openai.ChatOpenAI" (wrong-import-order)
+************* Module analyse_codebase
+analyse_codebase.py:9:0: C0301: Line too long (108/100) (line-too-long)
+analyse_codebase.py:10:0: C0301: Line too long (108/100) (line-too-long)
+analyse_codebase.py:11:0: C0301: Line too long (138/100) (line-too-long)
+analyse_codebase.py:46:0: C0301: Line too long (105/100) (line-too-long)
+analyse_codebase.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+analyse_codebase.py:40:13: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+analyse_codebase.py:42:8: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+analyse_codebase.py:46:12: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+analyse_codebase.py:48:12: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+analyse_codebase.py:50:12: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+analyse_codebase.py:89:8: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+analyse_codebase.py:92:4: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+analyse_codebase.py:93:4: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+analyse_codebase.py:100:4: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+analyse_codebase.py:1:0: R0801: Similar lines in 2 files
+==analyse_codebase:[16:26]
+==create_reports:[21:30]
+logging.basicConfig(
+    filename=os.path.join(os.path.dirname(__file__), args.log_file),
+    level=logging.DEBUG,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+
+# Create a logger object
+logger = logging.getLogger(__name__)
+
+# Define the codebase directory to analyze and the output directory (duplicate-code)
+
+------------------------------------------------------------------
+Your code has been rated at 6.81/10 (previous run: 5.92/10, +0.89)
+
