@@ -14,6 +14,7 @@ import os
 import sys
 import argparse
 import logging
+import re
 from dotenv import load_dotenv
 
 # Parse command line arguments
@@ -108,8 +109,10 @@ def create_docstrings(script):
          {python_script}
         """
     )
-    
-    output_file_path = os.path.join(OUTPUT_DIR, script)
+
+    cleaned_path = re.sub(r"^(\.\./|\.\/)+", "", script)
+
+    output_file_path = os.path.join(OUTPUT_DIR, cleaned_path)
     ai_response = ""
     os.makedirs(os.path.dirname(output_file_path), exist_ok=True)
     with open(script, "r") as file:
