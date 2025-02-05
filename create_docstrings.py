@@ -1,3 +1,11 @@
+"""
+This script analyzes a codebase and generates reports by adding docstrings to Python scripts using AI. 
+It utilizes OpenAI's language model to improve the readability and maintainability of the codebase by 
+automatically generating docstrings for functions and classes in the scripts.
+
+The script requires an OpenAI API key to function, which should be set in the environment variables.
+"""
+
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
@@ -7,7 +15,6 @@ import sys
 import argparse
 import logging
 from dotenv import load_dotenv
-
 
 # Parse command line arguments
 parser = argparse.ArgumentParser(description="Create reports based on the analysis of a codebase using AI.")
@@ -33,7 +40,6 @@ if not OPENAI_API_KEY:
     logger.error("OpenAI API key not found. Please set the OPENAI_API_KEY environment variable.")
     sys.exit(1)
 
-
 CODEBASE_DIR = args.codebase_dir
 if not CODEBASE_DIR.endswith('/'):
     CODEBASE_DIR += '/'
@@ -49,6 +55,16 @@ llmOpenAI = ChatOpenAI(temperature=0.1, model_name="gpt-4o", streaming=True, api
 def run_chain(prompt, input_data):
     """
     Runs a chain of runnables with the given input data.
+
+    Args:
+        prompt (ChatPromptTemplate): The prompt template to use for generating docstrings.
+        input_data (str): The Python script content to process.
+
+    Returns:
+        str: The response from the AI model containing the script with added docstrings.
+
+    Raises:
+        Exception: If there is an error in invoking the chain.
     """
     chain = (
         {"python_script": RunnablePassthrough()}
@@ -60,9 +76,25 @@ def run_chain(prompt, input_data):
     return response
 
 def create_docstrings(script):
+    """
+    Creates docstrings for a given Python script using OpenAI's language model.
+
+    Args:
+        script (str): The path to the Python script file.
+
+    Returns:
+        str: The AI-generated script with added docstrings.
+
+    Side Effects:
+        Writes the modified script with docstrings to the output directory.
+        Logs the process of creating docstrings.
+
+    Raises:
+        FileNotFoundError: If the script file does not exist.
+    """
     prompt = ChatPromptTemplate.from_template("""
         This is a Python script, most likely without proper docstrings. Please add docstrings to the functions and classes in the script to 
-        improve readability and maintainability. Output should be a Python script with proper docstrings.
+        improve readability and maintainability. Output should be a Python script with proper docstrings, so leave out backticks and other formatting.
                                               
         Please:
         - add a docstring at the beginning of the script that describes its purpose.
@@ -84,13 +116,25 @@ def create_docstrings(script):
         script = file.read()
     with open(output_file_path, "w") as output_file:
         ai_response = run_chain(prompt, script)
+        if ai_response.startswith("```"):
+            ai_response = ai_response[9:].strip()
+        if ai_response.endswith("```"):
+            ai_response = ai_response[:-3]
+
         output_file.write(ai_response)
     logger.info(f"Docstrings created in {output_file_path}")
     return ai_response
 
 def main():
     """
-    Main function to add docstrings using OpenAI.
+    Main function to add docstrings to Python scripts in a codebase using OpenAI.
+
+    Side Effects:
+        Logs the analysis process.
+        Exits the program if the codebase directory does not exist.
+
+    Raises:
+        SystemExit: If the codebase directory does not exist.
     """
     if not os.path.exists(CODEBASE_DIR):
         logger.error(f"Error: Directory {CODEBASE_DIR} does not exist.")
@@ -104,6 +148,6 @@ def main():
                 script_path = os.path.join(root, file)
                 create_docstrings(script_path)
 
-
 if __name__ == "__main__":
     main()
+
