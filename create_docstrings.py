@@ -113,6 +113,9 @@ def create_docstrings(script):
     cleaned_path = re.sub(r"^(\.\./|\.\/)+", "", script)
 
     output_file_path = os.path.join(OUTPUT_DIR, cleaned_path)
+    if os.path.exists(output_file_path) and os.path.getmtime(script) <= os.path.getmtime(output_file_path):
+        logger.info(f"Skipping {script} as it is not newer than the existing output.")
+        return ""
     ai_response = ""
     os.makedirs(os.path.dirname(output_file_path), exist_ok=True)
     with open(script, "r") as file:

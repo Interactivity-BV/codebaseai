@@ -1,0 +1,7 @@
+mdocs
+langchain_core
+langchain_openai
+dotenv
+vulture
+pylint
+radon
