@@ -90,7 +90,7 @@ def create_docstrings(script):
 
 def main():
     """
-    Main function to create analysis reports using OpenAI.
+    Main function to add docstrings using OpenAI.
     """
     if not os.path.exists(CODEBASE_DIR):
         logger.error(f"Error: Directory {CODEBASE_DIR} does not exist.")
