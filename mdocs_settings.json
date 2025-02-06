@@ -1,1 +1,7 @@
-{"title": "Codebase", "description": "AI-supported codebase analytics", "developer": "Interactivity", "mail": "info@interactivity.nl", "link": ""}
+{
+    "title": "AI-documentation support",
+    "description": "Module to analyse Python repositories using tools and AI",
+    "developer": "Interactivity",
+    "mail": "",
+    "link": "http://www.interactivity.nl"
+}

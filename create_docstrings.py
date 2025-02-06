@@ -6,25 +6,28 @@ automatically generating docstrings for functions and classes in the scripts.
 The script requires an OpenAI API key to function, which should be set in the environment variables.
 """
 
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.output_parsers import StrOutputParser
-from langchain_core.runnables import RunnablePassthrough
-from langchain_openai import ChatOpenAI
+
 import os
 import sys
 import argparse
-import logging
 import re
-from dotenv import load_dotenv
+from commands import run_command
+import logging
+from ai import run_chain
+from langchain_core.prompts import ChatPromptTemplate
+import json
 
 # Parse command line arguments
 parser = argparse.ArgumentParser(description="Create reports based on the analysis of a codebase using AI.")
 parser.add_argument("-c", "--codebase_dir", required=True, help="The directory of the codebase to analyze.")
 parser.add_argument("-o", "--output_dir", required=True, help="The directory to save the analysis reports.")
+parser.add_argument("-t", "--title", default="Repository documentation", help="Title of the documentation")
+parser.add_argument("-d", "--developer", default="Personal", help="Name of the developer / owner")
+parser.add_argument("-e", "--email", default="", help="E-mail address")
+parser.add_argument("-u", "--url", default="", help="URL of the website / repository")
+parser.add_argument("-m", "--meta", default="AI-generated documentation", help="Short description / metadata on the documentation")
 parser.add_argument("-l", "--log_file", default=os.path.join(os.path.dirname(__file__), 'analysis.log'), help="The file to save the log.")
 args = parser.parse_args()
-
-load_dotenv()
 
 # Configure logging
 logging.basicConfig(
@@ -36,10 +39,6 @@ logging.basicConfig(
 # Create a logger object
 logger = logging.getLogger(__name__)
 
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-if not OPENAI_API_KEY:
-    logger.error("OpenAI API key not found. Please set the OPENAI_API_KEY environment variable.")
-    sys.exit(1)
 
 CODEBASE_DIR = args.codebase_dir
 if not CODEBASE_DIR.endswith('/'):
@@ -47,34 +46,19 @@ if not CODEBASE_DIR.endswith('/'):
 OUTPUT_DIR = args.output_dir
 if not OUTPUT_DIR.endswith('/'):
     OUTPUT_DIR += '/'
+OUTPUT_DOCS = OUTPUT_DIR + "/docs/"
+
+TITLE = args.title
+DEVELOPER = args.developer
+MAIL = args.email
+LINK = args.url
+DESCRIPTION = args.meta
+
 
 # Ensure output directory exists
 os.makedirs(OUTPUT_DIR, exist_ok=True)
+os.makedirs(OUTPUT_DOCS, exist_ok=True)
 
-llmOpenAI = ChatOpenAI(temperature=0.1, model_name="gpt-4o", streaming=True, api_key=OPENAI_API_KEY)
-
-def run_chain(prompt, input_data):
-    """
-    Runs a chain of runnables with the given input data.
-
-    Args:
-        prompt (ChatPromptTemplate): The prompt template to use for generating docstrings.
-        input_data (str): The Python script content to process.
-
-    Returns:
-        str: The response from the AI model containing the script with added docstrings.
-
-    Raises:
-        Exception: If there is an error in invoking the chain.
-    """
-    chain = (
-        {"python_script": RunnablePassthrough()}
-        | prompt  
-        | llmOpenAI
-        | StrOutputParser()
-    )
-    response = chain.invoke(input_data)
-    return response
 
 def create_docstrings(script):
     """
@@ -106,7 +90,7 @@ def create_docstrings(script):
         - indicate (serious) issues, debug statements, or future work in the docstrings.        
 
         Python:
-         {python_script}
+         {input}
         """
     )
 
@@ -131,6 +115,57 @@ def create_docstrings(script):
     logger.info(f"Docstrings created in {output_file_path}")
     return ai_response
 
+def create_mdocs_report(documentation):
+    prompt = ChatPromptTemplate.from_template("""
+        Here is the output of a mdocs analysis of the docstrings in this module.
+        Summarize the key functionalities and workflows described in this documentation.md. 
+        Highlight the main modules, their responsibilities, and how they interact. 
+        Additionally, point out any unique features or design patterns used.
+
+        Documentation:
+         {input}
+        """
+    )
+    
+    output_file_path = os.path.join(OUTPUT_DOCS, "documentation_summary_ai.md")
+    ai_response = ""
+    with open(output_file_path, "w") as output_file:
+        ai_response = run_chain(prompt, documentation)
+        output_file.write(ai_response)
+    logger.info(f"Documentation summary saved to {output_file_path}")
+    return ai_response
+
+def create_mdocs_onboarding(documentation):
+    prompt = ChatPromptTemplate.from_template("""
+        Here is the output of a mdocs analysis of the docstrings in this module.
+        Create an onboarding guide for new developers based on the documentation.md. 
+        Explain the codebase structure, key modules to focus on, and the typical development workflow.
+
+        Documentation:
+         {input}
+        """
+    )
+    
+    output_file_path = os.path.join(OUTPUT_DOCS, "documentation_onboarding_ai.md")
+    ai_response = ""
+    with open(output_file_path, "w") as output_file:
+        ai_response = run_chain(prompt, documentation)
+        output_file.write(ai_response)
+    logger.info(f"Documentation onboarding saved to {output_file_path}")
+    return ai_response
+
+
+
+def process_mdocs():
+    config = {"title": f"{TITLE}", "description": f"{DESCRIPTION}", "developer": f"{DEVELOPER}", "mail": f"{MAIL}", "link": f"{LINK}"}
+    mdocs_settings_path = os.path.join(CODEBASE_DIR, "mdocs_settings.json")
+    with open(mdocs_settings_path, "w") as settings_file:
+        json.dump(config, settings_file, indent=4)
+    run_command(f"mdocs {OUTPUT_DIR}", output_file=None, logger=logger)
+    run_command(f"mv {CODEBASE_DIR}documentation.md {OUTPUT_DOCS}", output_file=None, logger=logger)
+
+
+
 def main():
     """
     Main function to add docstrings to Python scripts in a codebase using OpenAI.
@@ -153,6 +188,19 @@ def main():
             if file.endswith(".py"):
                 script_path = os.path.join(root, file)
                 create_docstrings(script_path)
+    logger.info("Creating mdocs file")
+    process_mdocs()
+    documentation_path = os.path.join(OUTPUT_DOCS, "documentation.md")
+    if os.path.exists(documentation_path):
+        with open(documentation_path, "r") as doc_file:
+            documentation = doc_file.read()
+        logger.info("Creating report")
+        create_mdocs_report(documentation)
+        logger.info("Creating onboarding")
+        create_mdocs_onboarding(documentation)
+    else:
+        logger.error(f"Error: {documentation_path} does not exist.")
+
 
 if __name__ == "__main__":
     main()

@@ -2,3 +2,6 @@
 analysis.log
 __pycache__/__init__.cpython-310.pyc
 __pycache__/analyse_codebase.cpython-310.pyc
+__pycache__/ai.cpython-310.pyc
+__pycache__/commands.cpython-310.pyc
+mdocs_settings.json
