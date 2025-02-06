@@ -6,7 +6,6 @@ automatically generating docstrings for functions and classes in the scripts.
 The script requires an OpenAI API key to function, which should be set in the environment variables.
 """
 
-
 import os
 import sys
 import argparse
@@ -19,7 +18,7 @@ import json
 
 # Parse command line arguments
 parser = argparse.ArgumentParser(description="Create reports based on the analysis of a codebase using AI.")
-parser.add_argument("-c", "--codebase_dir", required=True, help="The directory of the codebase to analyze.")
+parser.add_argument("-c", "--codebase_dir", required=True, help="The directory of the codebase (module level) to analyze.")
 parser.add_argument("-o", "--output_dir", required=True, help="The directory to save the analysis reports.")
 parser.add_argument("-t", "--title", default="Repository documentation", help="Title of the documentation")
 parser.add_argument("-d", "--developer", default="Personal", help="Name of the developer / owner")
@@ -39,14 +38,21 @@ logging.basicConfig(
 # Create a logger object
 logger = logging.getLogger(__name__)
 
-
 CODEBASE_DIR = args.codebase_dir
+if not os.path.exists(CODEBASE_DIR):
+    logger.error(f"Error: Directory {CODEBASE_DIR} does not exist.")
+    sys.exit(1)
+if CODEBASE_DIR.startswith('/'):
+    CODEBASE_DIR = CODEBASE_DIR[1:]
+    logger.warning(f"Removed leading '/' from codebase (module) directory path.")
+
 if not CODEBASE_DIR.endswith('/'):
     CODEBASE_DIR += '/'
 OUTPUT_DIR = args.output_dir
 if not OUTPUT_DIR.endswith('/'):
     OUTPUT_DIR += '/'
-OUTPUT_DOCS = OUTPUT_DIR + "/docs/"
+ 
+OUTPUT_DOCS = OUTPUT_DIR + CODEBASE_DIR + "/docs/"
 
 TITLE = args.title
 DEVELOPER = args.developer
@@ -54,11 +60,9 @@ MAIL = args.email
 LINK = args.url
 DESCRIPTION = args.meta
 
-
 # Ensure output directory exists
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 os.makedirs(OUTPUT_DOCS, exist_ok=True)
-
 
 def create_docstrings(script):
     """
@@ -97,25 +101,41 @@ def create_docstrings(script):
     cleaned_path = re.sub(r"^(\.\./|\.\/)+", "", script)
 
     output_file_path = os.path.join(OUTPUT_DIR, cleaned_path)
-    if os.path.exists(output_file_path) and os.path.getmtime(script) <= os.path.getmtime(output_file_path):
+    if os.path.exists(output_file_path) and os.path.getmtime(script) < os.path.getmtime(output_file_path):
         logger.info(f"Skipping {script} as it is not newer than the existing output.")
         return ""
     ai_response = ""
     os.makedirs(os.path.dirname(output_file_path), exist_ok=True)
     with open(script, "r") as file:
         script = file.read()
-    with open(output_file_path, "w") as output_file:
-        ai_response = run_chain(prompt, script)
-        if ai_response.startswith("```"):
-            ai_response = ai_response[9:].strip()
-        if ai_response.endswith("```"):
-            ai_response = ai_response[:-3]
+    if len(script.strip()) > 0:
+        with open(output_file_path, "w") as output_file:
+            ai_response = run_chain(prompt, script)
+            if ai_response.startswith("```"):
+                ai_response = ai_response[9:].strip()
+            if ai_response.endswith("```"):
+                ai_response = ai_response[:-3]
 
-        output_file.write(ai_response)
-    logger.info(f"Docstrings created in {output_file_path}")
+            output_file.write(ai_response)
+        logger.info(f"Docstrings created in {output_file_path}")
+    else:
+        logger.info(f"Skipping empty file: {output_file_path} ")
     return ai_response
 
 def create_mdocs_report(documentation):
+    """
+    Generates a summary report of the documentation using AI.
+
+    Args:
+        documentation (str): The documentation content to summarize.
+
+    Returns:
+        str: The AI-generated summary of the documentation.
+
+    Side Effects:
+        Writes the summary to a file in the output directory.
+        Logs the process of creating the summary.
+    """
     prompt = ChatPromptTemplate.from_template("""
         Here is the output of a mdocs analysis of the docstrings in this module.
         Summarize the key functionalities and workflows described in this documentation.md. 
@@ -136,6 +156,19 @@ def create_mdocs_report(documentation):
     return ai_response
 
 def create_mdocs_onboarding(documentation):
+    """
+    Creates an onboarding guide for new developers based on the documentation.
+
+    Args:
+        documentation (str): The documentation content to use for the onboarding guide.
+
+    Returns:
+        str: The AI-generated onboarding guide.
+
+    Side Effects:
+        Writes the onboarding guide to a file in the output directory.
+        Logs the process of creating the onboarding guide.
+    """
     prompt = ChatPromptTemplate.from_template("""
         Here is the output of a mdocs analysis of the docstrings in this module.
         Create an onboarding guide for new developers based on the documentation.md. 
@@ -154,17 +187,21 @@ def create_mdocs_onboarding(documentation):
     logger.info(f"Documentation onboarding saved to {output_file_path}")
     return ai_response
 
-
-
 def process_mdocs():
+    """
+    Processes the mdocs settings and generates the documentation file.
+
+    Side Effects:
+        Writes the mdocs settings to a JSON file.
+        Executes shell commands to generate and move the documentation file.
+        Logs the process of generating the documentation.
+    """
     config = {"title": f"{TITLE}", "description": f"{DESCRIPTION}", "developer": f"{DEVELOPER}", "mail": f"{MAIL}", "link": f"{LINK}"}
-    mdocs_settings_path = os.path.join(CODEBASE_DIR, "mdocs_settings.json")
+    mdocs_settings_path = os.path.join(OUTPUT_DIR, "mdocs_settings.json")
     with open(mdocs_settings_path, "w") as settings_file:
         json.dump(config, settings_file, indent=4)
-    run_command(f"mdocs {OUTPUT_DIR}", output_file=None, logger=logger)
-    run_command(f"mv {CODEBASE_DIR}documentation.md {OUTPUT_DOCS}", output_file=None, logger=logger)
-
-
+    run_command(f"mdocs {OUTPUT_DIR}{CODEBASE_DIR}", output_file=None, logger=logger)
+    run_command(f"mv {OUTPUT_DIR}documentation.md {OUTPUT_DOCS}", output_file=None, logger=logger)
 
 def main():
     """
@@ -201,7 +238,5 @@ def main():
     else:
         logger.error(f"Error: {documentation_path} does not exist.")
 
-
 if __name__ == "__main__":
     main()
-

@@ -29,7 +29,6 @@ logging.basicConfig(
 # Create a logger object
 logger = logging.getLogger(__name__)
 
-
 REPORT_DIR = args.report_dir
 if not REPORT_DIR.endswith('/'):
     REPORT_DIR += '/'
@@ -39,7 +38,6 @@ if not OUTPUT_DIR.endswith('/'):
 
 # Ensure output directory exists
 os.makedirs(OUTPUT_DIR, exist_ok=True)
-
 
 def create_vulture_report(report):
     """
@@ -263,4 +261,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

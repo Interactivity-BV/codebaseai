@@ -1,3 +1,23 @@
+"""
+This script is designed to interact with the OpenAI API using a chain of runnables to process input data and generate AI responses. 
+It utilizes environment variables for configuration and includes logging for error handling. The script is intended for use with 
+the OpenAI GPT-4 model and requires an API key to function.
+
+Modules:
+- langchain_core.output_parsers: Provides output parsers for processing AI responses.
+- langchain_core.runnables: Contains runnable components for building processing chains.
+- langchain_openai: Interfaces with OpenAI's language models.
+- sys, os: Standard Python modules for system operations and environment management.
+- logging: Standard Python module for logging error messages.
+- dotenv: Loads environment variables from a .env file.
+
+Classes:
+- None
+
+Functions:
+- run_chain: Executes a chain of runnables to process input data and generate an AI response.
+"""
+
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
 from langchain_openai import ChatOpenAI
@@ -31,6 +51,14 @@ def run_chain(prompt, input_data):
 
     Raises:
         Exception: If there is an error during the chain execution.
+
+    Side Effects:
+        - Logs an error message if the OpenAI API key is not found.
+        - Exits the program if the API key is missing.
+
+    Future Work:
+        - Implement error handling for specific exceptions during chain execution.
+        - Consider adding more detailed logging for debugging purposes.
     """
     chain = (
         {"input": RunnablePassthrough()}

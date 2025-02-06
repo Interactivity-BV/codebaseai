@@ -13,6 +13,7 @@ At a later stage large reports will be processed in chunks using the langchain m
 - **Pylint:** Checks code quality and provides linting feedback.
 - **Radon:** Analyzes cyclomatic complexity and maintainability index.
 - **LLM Integration:** Outputs are processed with LangChain to gain additional insights and recommendations.
+- **Documentation generation:** Add docstrings to the Python files and process them with `mdocs`. Documentation is created with a summary of the module and an onboarding file for new developers.
 
 ## Prerequisites
 
@@ -35,7 +36,7 @@ At a later stage large reports will be processed in chunks using the langchain m
 
 3. Install the required Python packages:
    ```bash
-   pip install vulture pylint radon langchain langchain_openai langchain_core
+   pip install vulture pylint radon langchain langchain_openai langchain_core mdocs
    ```
 
 4. Verify installation:
@@ -88,6 +89,20 @@ The `create_reports.py` processes the reports by asking ChatGPT for summary info
 ## Example output
 
 Please check the `example_reports` for the reporting done on this project.
+
+## Documentation generation
+
+The `create_docstrings.py` script adds docstrings to all Python scripts. It will then run `mdocs` on the codebase and process the resulting documentation with the LLM to produce a summary report and an onboarding file. 
+
+Please be aware:
+  - When using the module directory for both input and output, Python files will be overwritten. Make sure you have committed all you changes before doing this.
+  - The codebase needs to be a module: it should contain a `__init__.py` file
+  - The script creates a `docs` directory in the output directory.
+
+```bash
+cd ..
+python codebase/create_docstrings.py -o . -c codebase -t "AI-documentation support" -m "Module to analyse Python repositories using standard tools and AI" -u "https://github.com/Interactivity-BV/codebaseai" -d "Interactivity" -e "info@interactivity.nl"
+```
 
 ## Contribution
 
