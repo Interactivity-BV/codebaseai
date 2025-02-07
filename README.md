@@ -36,7 +36,13 @@ At a later stage large reports will be processed in chunks using the langchain m
 
 3. Install the required Python packages:
    ```bash
-   pip install vulture pylint radon langchain langchain_openai langchain_core mdocs
+   pip install -r requirements.txt
+   ````
+
+   or
+
+   ```bash
+   pip install vulture pylint radon langchain langchain_openai langchain_core mdocs python-dotenv
    ```
 
 4. Verify installation:
@@ -57,11 +63,11 @@ At a later stage large reports will be processed in chunks using the langchain m
 
 ## Creating the basic reports
 
-The `analyze_codebase.py` runs the Python code analytics tools and creates report files for each of the tools.
+The `analyse_codebase.py` runs the Python code analytics tools and creates report files for each of the tools.
 
 1. Run the script:
    ```bash
-   python analyze_codebase.py -c ~/git/my_project -o ~/reports -l ~/reports/log.txt
+   python analyse_codebase.py -c ~/git/my_project -o ~/reports -l ~/reports/log.txt
    ```
 
 2. View the generated reports in the `analysis_reports` directory:
