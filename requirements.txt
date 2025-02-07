@@ -1,7 +1,7 @@
 mdocs
 langchain_core
 langchain_openai
-dotenv
+python-dotenv
 vulture
 pylint
 radon
