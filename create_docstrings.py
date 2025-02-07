@@ -24,8 +24,10 @@ parser.add_argument("-t", "--title", default="Repository documentation", help="T
 parser.add_argument("-d", "--developer", default="Personal", help="Name of the developer / owner")
 parser.add_argument("-e", "--email", default="", help="E-mail address")
 parser.add_argument("-u", "--url", default="", help="URL of the website / repository")
-parser.add_argument("-m", "--meta", default="AI-generated documentation", help="Short description / metadata on the documentation")
+parser.add_argument("-D", "--description", default="AI-generated documentation", help="Short description on the documentation")
 parser.add_argument("-l", "--log_file", default=os.path.join(os.path.dirname(__file__), 'analysis.log'), help="The file to save the log.")
+parser.add_argument("-m", "--model_name", default="gpt-4o", help="OpenAI model name.")
+
 args = parser.parse_args()
 
 # Configure logging
@@ -51,14 +53,15 @@ if not CODEBASE_DIR.endswith('/'):
 OUTPUT_DIR = args.output_dir
 if not OUTPUT_DIR.endswith('/'):
     OUTPUT_DIR += '/'
- 
+
 OUTPUT_DOCS = OUTPUT_DIR + CODEBASE_DIR + "/docs/"
 
 TITLE = args.title
 DEVELOPER = args.developer
 MAIL = args.email
 LINK = args.url
-DESCRIPTION = args.meta
+DESCRIPTION = args.description
+MODEL_NAME = args.model_name
 
 # Ensure output directory exists
 os.makedirs(OUTPUT_DIR, exist_ok=True)
@@ -110,7 +113,7 @@ def create_docstrings(script):
         script = file.read()
     if len(script.strip()) > 0:
         with open(output_file_path, "w") as output_file:
-            ai_response = run_chain(prompt, script)
+            ai_response = run_chain(prompt, script, MODEL_NAME)
             if ai_response.startswith("```"):
                 ai_response = ai_response[9:].strip()
             if ai_response.endswith("```"):
@@ -150,7 +153,7 @@ def create_mdocs_report(documentation):
     output_file_path = os.path.join(OUTPUT_DOCS, "documentation_summary_ai.md")
     ai_response = ""
     with open(output_file_path, "w") as output_file:
-        ai_response = run_chain(prompt, documentation)
+        ai_response = run_chain(prompt, documentation, MODEL_NAME)
         output_file.write(ai_response)
     logger.info(f"Documentation summary saved to {output_file_path}")
     return ai_response
@@ -182,7 +185,7 @@ def create_mdocs_onboarding(documentation):
     output_file_path = os.path.join(OUTPUT_DOCS, "documentation_onboarding_ai.md")
     ai_response = ""
     with open(output_file_path, "w") as output_file:
-        ai_response = run_chain(prompt, documentation)
+        ai_response = run_chain(prompt, documentation, MODEL_NAME)
         output_file.write(ai_response)
     logger.info(f"Documentation onboarding saved to {output_file_path}")
     return ai_response

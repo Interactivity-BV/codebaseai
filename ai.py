@@ -59,14 +59,18 @@ def run_chain(prompt, input_data, model_name="gpt-4o"):
         - Implement error handling for specific exceptions during chain execution.
         - Consider adding more detailed logging for debugging purposes.
     """
+    response = ""
+    try:
+        llmOpenAI = ChatOpenAI(temperature=0.1, model_name=model_name, streaming=True, api_key=OPENAI_API_KEY)
 
-    llmOpenAI = ChatOpenAI(temperature=0.1, model_name=model_name, streaming=True, api_key=OPENAI_API_KEY)
-
-    chain = (
-        {"input": RunnablePassthrough()}
-        | prompt  
-        | llmOpenAI
-        | StrOutputParser()
-    )
-    response = chain.invoke(input_data)
+        chain = (
+            {"input": RunnablePassthrough()}
+            | prompt  
+            | llmOpenAI
+            | StrOutputParser()
+        )
+        response = chain.invoke(input_data)
+    except Exception as e:
+        logger.error(f"Error during large language model execution: {e}")
+        sys.exit
     return response
