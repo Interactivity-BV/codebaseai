@@ -1,6 +1,7 @@
 # Python Codebase Analyzer
 
-This project is a Python script that analyzes a Python codebase for unused code, linting issues, and complexity metrics. It also processes the output with a large language model (ChatGPT 4o only for now). The analysis tools used include `vulture`, `pylint`, and `radon`.
+This project is a Python script that analyzes a Python codebase for unused code, linting issues, and complexity metrics. It also processes the output with a large language model. The analysis tools used include `vulture`, `pylint`, and `radon`. It also enables yo to create docstrings
+on all your python files and generate documentation based on these docstrings.
 
 ## Disclaimer
 
@@ -19,6 +20,7 @@ At a later stage large reports will be processed in chunks using the langchain m
 
 - Python 3.7 or higher
 - Git (for cloning the repository)
+- An [OpenAI API key](https://www.openai.com) and a model to use. **Tip**: use a model with a large context window, for example gpt-4o, to fit large files.
 
 ## Installation
 
@@ -107,7 +109,7 @@ Please be aware:
 
 ```bash
 cd ..
-python codebase/create_docstrings.py -o . -c codebase -t "AI-documentation support" -m "Module to analyse Python repositories using standard tools and AI" -u "https://github.com/Interactivity-BV/codebaseai" -d "Interactivity" -e "info@interactivity.nl"
+python codebase/create_docstrings.py -o . -c codebase -t "AI-documentation support" -D "Module to analyse Python repositories using standard tools and AI" -u "https://github.com/Interactivity-BV/codebaseai" -d "Interactivity" -e "info@interactivity.nl"
 ```
 
 ## Contribution
