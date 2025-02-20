@@ -110,6 +110,15 @@ cd ..
 python codebase/create_docstrings.py -o . -c codebase -t "AI-documentation support" -D "Module to analyse Python repositories using standard tools and AI" -u "https://github.com/Interactivity-BV/codebaseai" -d "Interactivity" -e "info@interactivity.nl"
 ```
 
+## Create or update README.md
+
+The `create_readme.py` processes Python main files, markdown files and the requirements.txt to create or update the [README.md](README.md):
+
+```bash
+python codebase/create_readme.py -t "Title of the repository" -o codebase/README.md -c codebase
+```
+
+
 ## Contribution
 
 Contributions are welcome! Feel free to submit issues or pull requests to improve the project.
