@@ -129,8 +129,8 @@ This project is licensed under the MIT License. See the `LICENSE` file for detai
 
 ## Additional Resources
 
-- [Documentation Summary](documentation_summary_ai.md)
-- [Onboarding Guide](documentation_onboarding_ai.md)
-- [Full Analysis Summary](full_analysis_summary_ai.md)
+- [Documentation Summary](docs/documentation_summary_ai.md)
+- [Onboarding Guide](docs/documentation_onboarding_ai.md)
+- [Full Analysis Summary](example_reports/full_analysis_summary_ai.md)
 
 This README provides a comprehensive overview of the project, its features, and how to get started. For more detailed information, refer to the documentation files linked above.
