@@ -102,13 +102,13 @@ def main():
 
             if file.endswith(".md") and file != "README.md":
                 with open(script_path, "r") as doc_file:
-                    input_text += f"\n$$$$$ Documentation file {file} $$$$$\n" + doc_file.read() + f"\n$$$$$ End of documentation file {file} $$$$$\n"
+                    input_text += f"\n$$$$$ Documentation file {script_path} $$$$$\n" + doc_file.read() + f"\n$$$$$ End of documentation file {script_path} $$$$$\n"
 
             if file.endswith(".py"):
                 with open(script_path, "r") as python_file:
                     python_script = python_file.read()
                     if "__main__" in python_script:
-                        input_text += f"\n$$$$$ Python script {file} $$$$$\n" + python_script + f"\n$$$$$ End of Python script {file} $$$$$\n"
+                        input_text += f"\n$$$$$ Python script {script_path} $$$$$\n" + python_script + f"\n$$$$$ End of Python script {script_path} $$$$$\n"
             if file == "requirements.txt":
                 with open(script_path, "r") as req_file:
                     input_text += f"\n$$$$$ Requirements file {file} $$$$$\n" + req_file.read() + f"\n$$$$$ End of requirements file {file} $$$$$\n"

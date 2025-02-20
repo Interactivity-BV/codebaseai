@@ -118,7 +118,6 @@ The `create_readme.py` processes Python main files, markdown files and the requi
 python codebase/create_readme.py -t "Title of the repository" -o codebase/README.md -c codebase
 ```
 
-
 ## Contribution
 
 Contributions are welcome! Feel free to submit issues or pull requests to improve the project.
