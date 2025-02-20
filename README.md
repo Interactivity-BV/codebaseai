@@ -1,12 +1,10 @@
 # Python Codebase Analyzer
 
-This project is a Python script that analyzes a Python codebase for unused code, linting issues, and complexity metrics. It also processes the output with a large language model. The analysis tools used include `vulture`, `pylint`, and `radon`. It also enables yo to create docstrings
-on all your python files and generate documentation based on these docstrings.
+This project is a Python script that analyzes a Python codebase for unused code, linting issues, and complexity metrics. It also processes the output with a large language model. The analysis tools used include `vulture`, `pylint`, and `radon`. It also enables you to create docstrings on all your Python files and generate documentation based on these docstrings.
 
 ## Disclaimer
 
-The code has only be tested on relatively small projects. It might be that the reports are too long for the context memory of the LLM. Also keep in mind that for large codebases the costs of using the OpenAI API might be significant. Use at your own risk! 
-At a later stage large reports will be processed in chunks using the langchain modules. 
+The code has only been tested on relatively small projects. It might be that the reports are too long for the context memory of the LLM. Also, keep in mind that for large codebases, the costs of using the OpenAI API might be significant. Use at your own risk! At a later stage, large reports will be processed in chunks using the langchain modules.
 
 ## Features
 
@@ -20,7 +18,7 @@ At a later stage large reports will be processed in chunks using the langchain m
 
 - Python 3.7 or higher
 - Git (for cloning the repository)
-- An [OpenAI API key](https://www.openai.com) and a model to use. **Tip**: use a model with a large context window, for example gpt-4o, to fit large files.
+- An [OpenAI API key](https://www.openai.com) and a model to use. **Tip**: use a model with a large context window, for example, gpt-4o, to fit large files.
 
 ## Installation
 
@@ -39,7 +37,7 @@ At a later stage large reports will be processed in chunks using the langchain m
 3. Install the required Python packages:
    ```bash
    pip install -r requirements.txt
-   ````
+   ```
 
    or
 
@@ -63,7 +61,7 @@ At a later stage large reports will be processed in chunks using the langchain m
 
 5. Create the `.env` file and place your `OPENAI_API_KEY` in that file.
 
-## Creating the basic reports
+## Creating the Basic Reports
 
 The `analyse_codebase.py` runs the Python code analytics tools and creates report files for each of the tools.
 
@@ -78,9 +76,9 @@ The `analyse_codebase.py` runs the Python code analytics tools and creates repor
    - `radon_cc_report.txt`: Shows cyclomatic complexity.
    - `radon_mi_report.txt`: Shows maintainability index.
 
-## Running ChatGPT on reports
+## Running ChatGPT on Reports
 
-The `create_reports.py` processes the reports by asking ChatGPT for summary information, suggestions to fix the code and specific insights. It will also use the detailed reports from each of the tools to generate a global project evaluation.
+The `create_reports.py` processes the reports by asking ChatGPT for summary information, suggestions to fix the code, and specific insights. It will also use the detailed reports from each of the tools to generate a global project evaluation.
 
 1. Run the script:
    ```bash
@@ -94,17 +92,17 @@ The `create_reports.py` processes the reports by asking ChatGPT for summary info
    - `radon_mi_report_summary_ai.md`: Reporting on maintainability index.
    - `full_analysis_summary_ai.md`: Reporting on the entire codebase.
 
-## Example output
+## Example Output
 
 Please check the `example_reports` for the reporting done on this project.
 
-## Documentation generation
+## Documentation Generation
 
-The `create_docstrings.py` script adds docstrings to all Python scripts. It will then run `mdocs` on the codebase and process the resulting documentation with the LLM to produce a summary report and an onboarding file. 
+The `create_docstrings.py` script adds docstrings to all Python scripts. It will then run `mdocs` on the codebase and process the resulting documentation with the LLM to produce a summary report and an onboarding file.
 
 Please be aware:
-  - When using the module directory for both input and output, Python files will be overwritten. Make sure you have committed all you changes before doing this.
-  - The codebase needs to be a module: it should contain a `__init__.py` file
+  - When using the module directory for both input and output, Python files will be overwritten. Make sure you have committed all your changes before doing this.
+  - The codebase needs to be a module: it should contain a `__init__.py` file.
   - The script creates a `docs` directory in the output directory.
 
 ```bash
@@ -119,3 +117,11 @@ Contributions are welcome! Feel free to submit issues or pull requests to improv
 ## License
 
 This project is licensed under the MIT License. See the `LICENSE` file for details.
+
+## Additional Resources
+
+- [Documentation Summary](documentation_summary_ai.md)
+- [Onboarding Guide](documentation_onboarding_ai.md)
+- [Full Analysis Summary](full_analysis_summary_ai.md)
+
+This README provides a comprehensive overview of the project, its features, and how to get started. For more detailed information, refer to the documentation files linked above.
