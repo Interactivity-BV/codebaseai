@@ -25,14 +25,14 @@ parser.add_argument("-d", "--developer", default="Personal", help="Name of the d
 parser.add_argument("-e", "--email", default="", help="E-mail address")
 parser.add_argument("-u", "--url", default="", help="URL of the website / repository")
 parser.add_argument("-D", "--description", default="AI-generated documentation", help="Short description on the documentation")
-parser.add_argument("-l", "--log_file", default=os.path.join(os.path.dirname(__file__), 'analysis.log'), help="The file to save the log.")
+parser.add_argument("-l", "--log_file", default='./analysis.log', help="The file to save the log.")
 parser.add_argument("-m", "--model_name", default="gpt-4o", help="OpenAI model name.")
 
 args = parser.parse_args()
 
 # Configure logging
 logging.basicConfig(
-    filename=os.path.join(os.path.dirname(__file__), args.log_file),
+    filename=args.log_file,
     level=logging.DEBUG,
     format='%(asctime)s - %(levelname)s - %(message)s'
 )

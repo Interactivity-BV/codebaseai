@@ -1,26 +1,23 @@
 import os
 import sys
 import argparse
-import re
-from commands import run_command
 import logging
 from ai import run_chain
 from langchain_core.prompts import ChatPromptTemplate
-import json
 
 # Parse command line arguments
 parser = argparse.ArgumentParser(description="Create / update README based on the analysis of a codebase using AI.")
 parser.add_argument("-c", "--codebase_dir", required=True, help="The directory of the codebase (module level) to analyze.")
 parser.add_argument("-o", "--output", required=True, help="The location of the README file.")
 parser.add_argument("-t", "--title", default="Repository documentation", help="Title of the documentation")
-parser.add_argument("-l", "--log_file", default=os.path.join(os.path.dirname(__file__), 'analysis.log'), help="The file to save the log.")
+parser.add_argument("-l", "--log_file", default='./analysis.log', help="The file to save the log.")
 parser.add_argument("-m", "--model_name", default="gpt-4o", help="OpenAI model name.")
 
 args = parser.parse_args()
 
 # Configure logging
 logging.basicConfig(
-    filename=os.path.join(os.path.dirname(__file__), args.log_file),
+    filename=args.log_file,
     level=logging.DEBUG,
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
@@ -51,13 +48,24 @@ os.makedirs(os.path.dirname(OUTPUT_DOC), exist_ok=True)
 
 def create_readme(input):
     prompt = ChatPromptTemplate.from_template("""
-    A README.md serves as the main entry point for users and developers to understand and use the project. It should be clear, structured, and informative.
+    A README.md serves as the main entry point for users and developers to understand and use the project. It should be clear, structured, and 
+    informative.
 
     Please provide the README.md for the project. If the project already has a README.md, please update it: add and correct it when necessary. 
-    Keep information present in the README when still relevant, and remove or update outdated information. Feel free to add links and additional sections which you think are missing from the README.
-                                                               
+    Keep information present in the README when still relevant, and remove or update outdated information. Feel free to add links and additional 
+    sections which you think are missing from the README. Suggestions for sections include: 
+    - Project Title & Description
+    - Installation Instructions
+    - Usage Guide
+    - Features
+    - Modules Overview
+    - Configuration & Customization
+    - Testing & Debugging
+    - Contributing Guide (for open-source projects)
+    - License & Author Information
+    
     The files you can use as a reference are listed below, using $$$$$ as a separator:
-         
+    
     {input}
         """
     )

@@ -14,7 +14,7 @@ from commands import run_command
 parser = argparse.ArgumentParser(description="Analyze a codebase using various tools.")
 parser.add_argument("-c", "--codebase_dir", required=True, help="The directory of the codebase to analyze.")
 parser.add_argument("-o", "--output_dir", required=True, help="The directory to save the analysis reports.")
-parser.add_argument("-l", "--log_file", default=os.path.join(os.path.dirname(__file__), 'analysis.log'), help="The file to save the log.")
+parser.add_argument("-l", "--log_file", default='./analysis.log', help="The file to save the log.")
 args = parser.parse_args()
 
 # Define the codebase directory to analyze and the output directory
@@ -28,7 +28,7 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # Configure logging
 logging.basicConfig(
-    filename=os.path.join(os.path.dirname(__file__), args.log_file),
+    filename=args.log_file,
     level=logging.DEBUG,
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
