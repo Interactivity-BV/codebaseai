@@ -86,7 +86,7 @@ def create_docstrings(script):
     """
     prompt = ChatPromptTemplate.from_template("""
         This is a Python script, most likely without proper docstrings. Please add docstrings to the functions and classes in the script to 
-        improve readability and maintainability. Output should be a Python script with proper docstrings, so leave out backticks and other formatting.
+        improve readability and maintainability. Output should be a Python script with proper docstrings, so leave out backticks, other formatting and notes.
                                               
         Please:
         - add a docstring at the beginning of the script that describes its purpose.
@@ -107,17 +107,18 @@ def create_docstrings(script):
     if os.path.exists(output_file_path) and os.path.getmtime(script) < os.path.getmtime(output_file_path):
         logger.info(f"Skipping {script} as it is not newer than the existing output.")
         return ""
+    else:
+        logger.info(f"Processing {script} to create docstrings.")
     ai_response = ""
     os.makedirs(os.path.dirname(output_file_path), exist_ok=True)
     with open(script, "r") as file:
         script = file.read()
     if len(script.strip()) > 0:
         with open(output_file_path, "w") as output_file:
+            logger.debug(MODEL_NAME)
             ai_response = run_chain(prompt, script, MODEL_NAME)
-            if ai_response.startswith("```"):
-                ai_response = ai_response[9:].strip()
-            if ai_response.endswith("```"):
-                ai_response = ai_response[:-3]
+            if "```" in ai_response:
+                ai_response = ai_response.split("```", 1)[1].rsplit("```", 1)[0].strip()
 
             output_file.write(ai_response)
         logger.info(f"Docstrings created in {output_file_path}")
