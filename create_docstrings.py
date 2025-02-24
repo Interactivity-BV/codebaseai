@@ -115,10 +115,10 @@ def create_docstrings(script):
         script = file.read()
     if len(script.strip()) > 0:
         with open(output_file_path, "w") as output_file:
-            logger.debug(MODEL_NAME)
             ai_response = run_chain(prompt, script, MODEL_NAME)
-            if "```" in ai_response:
-                ai_response = ai_response.split("```", 1)[1].rsplit("```", 1)[0].strip()
+            if ai_response.startswith("```"):
+                ai_response = ai_response[9:].strip()
+                ai_response = ai_response.rsplit("```", 1)[0].strip()
 
             output_file.write(ai_response)
         logger.info(f"Docstrings created in {output_file_path}")
@@ -204,6 +204,7 @@ def process_mdocs():
     mdocs_settings_path = os.path.join(OUTPUT_DIR, "mdocs_settings.json")
     with open(mdocs_settings_path, "w") as settings_file:
         json.dump(config, settings_file, indent=4)
+    logger.info(f"mdocs running on {OUTPUT_DIR}{CODEBASE_DIR}")
     run_command(f"mdocs {OUTPUT_DIR}{CODEBASE_DIR}", output_file=None, logger=logger)
     run_command(f"mv {OUTPUT_DIR}documentation.md {OUTPUT_DOCS}", output_file=None, logger=logger)
 
