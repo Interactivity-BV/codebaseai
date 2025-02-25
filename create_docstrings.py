@@ -27,6 +27,7 @@ parser.add_argument("-u", "--url", default="", help="URL of the website / reposi
 parser.add_argument("-D", "--description", default="AI-generated documentation", help="Short description on the documentation")
 parser.add_argument("-l", "--log_file", default='./analysis.log', help="The file to save the log.")
 parser.add_argument("-m", "--model_name", default="gpt-4o", help="OpenAI model name.")
+parser.add_argument("-P", "--python", default="T", help="Create also docstrings, not only create markdown files (T/F)")
 
 args = parser.parse_args()
 
@@ -204,8 +205,8 @@ def process_mdocs():
     mdocs_settings_path = os.path.join(OUTPUT_DIR, "mdocs_settings.json")
     with open(mdocs_settings_path, "w") as settings_file:
         json.dump(config, settings_file, indent=4)
-    logger.info(f"mdocs running on {OUTPUT_DIR}{CODEBASE_DIR}")
-    run_command(f"mdocs {OUTPUT_DIR}{CODEBASE_DIR}", output_file=None, logger=logger)
+    logger.info(f"mdocs running on {OUTPUT_DIR}")
+    run_command(f"mdocs {OUTPUT_DIR}", output_file=None, logger=logger)
     run_command(f"mv {OUTPUT_DIR}documentation.md {OUTPUT_DOCS}", output_file=None, logger=logger)
 
 def main():
@@ -223,13 +224,14 @@ def main():
         logger.error(f"Error: Directory {CODEBASE_DIR} does not exist.")
         sys.exit(1)
 
-    logger.info(f"Analyzing scripts at: {CODEBASE_DIR}")
-    logger.info(f"Scripts with docstrings will be saved to: {OUTPUT_DIR}")
-    for root, dirs, files in os.walk(CODEBASE_DIR):
-        for file in files:
-            if file.endswith(".py"):
-                script_path = os.path.join(root, file)
-                create_docstrings(script_path)
+    if args.python in ['T', 't']:
+        logger.info(f"Analyzing scripts at: {CODEBASE_DIR}")
+        logger.info(f"Scripts with docstrings will be saved to: {OUTPUT_DIR}")
+        for root, dirs, files in os.walk(CODEBASE_DIR):
+            for file in files:
+                if file.endswith(".py"):
+                    script_path = os.path.join(root, file)
+                    create_docstrings(script_path)
     logger.info("Creating mdocs file")
     process_mdocs()
     documentation_path = os.path.join(OUTPUT_DOCS, "documentation.md")
