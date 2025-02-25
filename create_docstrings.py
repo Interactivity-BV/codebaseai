@@ -205,8 +205,8 @@ def process_mdocs():
     mdocs_settings_path = os.path.join(OUTPUT_DIR, "mdocs_settings.json")
     with open(mdocs_settings_path, "w") as settings_file:
         json.dump(config, settings_file, indent=4)
-    logger.info(f"mdocs running on {OUTPUT_DIR}")
-    run_command(f"mdocs {OUTPUT_DIR}", output_file=None, logger=logger)
+    logger.info(f"mdocs running on {OUTPUT_DIR}{CODEBASE_DIR}")
+    run_command(f"mdocs {OUTPUT_DIR}{CODEBASE_DIR}", output_file=None, logger=logger)
     run_command(f"mv {OUTPUT_DIR}documentation.md {OUTPUT_DOCS}", output_file=None, logger=logger)
 
 def main():
