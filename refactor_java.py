@@ -65,7 +65,7 @@ def refactor(method_code, prompt_text):
 
 def remove_comments_from_code(java_code):
     """Replaces comments with placeholders so they don't interfere with `{` and `}` counting."""
-    comment_pattern = re.compile(r'/\*[\s\S]*?\*/|//[^\n]*')  # Matches block and single-line comments
+    comment_pattern = re.compile(r'/\*[\s\S]*?\*/|[^:}]//[^\n]*')
     comments = []
     
     def comment_placeholder(match):
@@ -91,16 +91,17 @@ def extract_and_refactor_methods(file_path, prompt_text):
 
     # Step 2: Updated regex to correctly handle return types, generics (`<>`), and exclude control statements
     method_signature_pattern = re.compile(
-        r'^\s*'  # Ensure the match is at the start of a line (excluding indentation)
+        r'^\s*'  # Start of line with optional spaces
         r'(?:(?:public|private|protected|static|final|synchronized|abstract|native|transient)\s+)*'  # Modifiers
-        r'(?!if|else|while|for|switch|catch)\s*'  # Ensure it is not a control statement
-        r'(?:[a-zA-Z_][\w<>\[\],\s]*)\s+' # Return type (supports `<>` generics and dots)
-        r'(\w+)\s*\([^;{]*\)\s*'  # Method name with parameters
+        r'(?!if|else|while|for|switch|catch|return|new|case)\s*'  # Ensure it's not a control structure
+        r'[a-zA-Z_][\w<>\[\],\s]*'  # Return type (supports `<>` generics)
+        r'\s+(\w+)\s*'  # Method name
+        r'\(\s*[^()]*\s*\)'  # Parameters (ensures balanced parentheses)
         r'(?:\s*throws\s+[\w<>\[\],. ]+)?'  # Optional "throws" clause
-        r'(?=\{)',  # Ensure the body starts with '{'
+        r'\s*\{',  # Ensure it directly follows `{`
         re.MULTILINE
     )
-
+    
     method_positions = [m.start() for m in method_signature_pattern.finditer(stripped_code)]
     refactored_code = stripped_code  # Preserve original file structure
     method_bodies = {}
@@ -108,19 +109,25 @@ def extract_and_refactor_methods(file_path, prompt_text):
     # Step 3: Extract and refactor methods using a stack-based approach
     for start in method_positions:
         brace_count = 0
-        i = start
+        inside_string = False
+        for i in range(start, len(stripped_code)):
+            char = stripped_code[i]
 
-        while i < len(stripped_code):
-            if stripped_code[i] == '{':
-                brace_count += 1
-            elif stripped_code[i] == '}':
-                brace_count -= 1
-                if brace_count == 0:
-                    method_body = stripped_code[start:i + 1]
-                    refactored_method = refactor(method_body, prompt_text)
-                    method_bodies[method_body] = refactored_method
-                    break
-            i += 1
+            # Toggle inside_string when encountering an unescaped quote (`"`)
+            if char == '"' and (i == 0 or stripped_code[i-1] != '\\'):
+                inside_string = not inside_string
+
+            if not inside_string:
+                if char == '{':
+                    brace_count += 1
+                elif char == '}':
+                    brace_count -= 1
+                    if brace_count == 0:
+                        method_body = stripped_code[start:i + 1]
+                        refactored_method = refactor(method_body, prompt_text)
+                        method_bodies[method_body] = refactored_method
+                        break
+
 
     # Step 4: Replace old methods with refactored versions in the modified code
     for old_method, new_method in method_bodies.items():
@@ -139,8 +146,11 @@ if __name__ == "__main__":
             if file.endswith(".java"):
                 file_path = os.path.join(root, file)
                 cleaned_path = re.sub(r"^(\.\./|\.\/)+", "", file_path)
-
+                if cleaned_path.startswith("/"):
+                    cleaned_path = cleaned_path[1:] 
+                    logger.warning(f"Input path is absolute. Removing leading slash: {cleaned_path}")
                 output_file_path = os.path.join(OUTPUT_DIR, cleaned_path)
+
                 if os.path.exists(output_file_path) and os.path.getmtime(file_path) < os.path.getmtime(output_file_path):
                     logger.info(f"Skipping {file_path} as it is not newer than the existing output.")
                 else:

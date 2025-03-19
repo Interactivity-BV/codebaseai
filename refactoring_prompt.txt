@@ -3,7 +3,8 @@ Refactor the method to use neo4j API version 5.+ code. Output the refactored met
 When there is nothing to refactor, output the original method. 
 Please refrain from any comments: the output needs to only Java code! 
 Key instructions:
-    - Refactor the method to use neo4j API version 5.+ code: `success` is replaced with `commit`, and methods such as `getNodes` are move to the `Transaction` class, amongs other changes.  
+    - Refactor the method to use neo4j API version 5.+ code: `success` is replaced with `commit`, and methods such as `getNodes`, `getNodesById` and many/ are move to 
+      the `Transaction` class, amongs other changes. Also database creation, configuration and shutdown were changed  
     - Output the refactored method only.
     - When there is nothing to refactor, output the original method.
     - it is Java code, not JavaScript. Make sure all variables are typed for example
