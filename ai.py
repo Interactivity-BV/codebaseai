@@ -36,7 +36,10 @@ if not OPENAI_API_KEY:
     logger.error("OpenAI API key not found. Please set the OPENAI_API_KEY environment variable.")
     sys.exit(1)
 
-def run_chain(prompt, input_data, model_name="gpt-4o"):
+def create_connection(model_name="gpt-4o"):
+    return ChatOpenAI(temperature=0.1, model_name=model_name, streaming=True, api_key=OPENAI_API_KEY)
+
+def run_chain(prompt, input_data, model_name="gpt-4o", connection=None):
     """
     Runs a chain of runnables with the given input data.
 
@@ -61,7 +64,10 @@ def run_chain(prompt, input_data, model_name="gpt-4o"):
     """
     response = ""
     try:
-        llmOpenAI = ChatOpenAI(temperature=0.1, model_name=model_name, streaming=True, api_key=OPENAI_API_KEY)
+        if connection:
+            llmOpenAI = connection
+        else:
+            llmOpenAI = create_connection()
 
         chain = (
             {"input": RunnablePassthrough()}

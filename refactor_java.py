@@ -3,7 +3,7 @@ import sys
 import logging
 import argparse 
 import os
-from ai import run_chain
+from ai import run_chain, create_connection
 from commands import run_command
 from langchain_core.prompts import ChatPromptTemplate
 
@@ -44,7 +44,7 @@ MODEL_NAME = args.model_name
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 
-def refactor(method_code, prompt_text):
+def refactor(method_code, prompt_text, connection):
     prompt = ChatPromptTemplate.from_template(prompt_text + """
                                                           
         Method: 
@@ -54,7 +54,7 @@ def refactor(method_code, prompt_text):
     logger.debug("----METHOD CODE----")
     logger.debug(method_code)
     logger.debug("----/METHOD CODE/----") 
-    ai_response = run_chain(prompt, method_code, model_name=MODEL_NAME)
+    ai_response = run_chain(prompt, method_code, model_name=MODEL_NAME, connection=connection)
     if ai_response.startswith("```"):
         ai_response = ai_response[7:].strip()
         ai_response = ai_response.rsplit("```", 1)[0].strip()
@@ -65,7 +65,7 @@ def refactor(method_code, prompt_text):
 
 def remove_comments_from_code(java_code):
     """Replaces comments with placeholders so they don't interfere with `{` and `}` counting."""
-    comment_pattern = re.compile(r'/\*[\s\S]*?\*/|[^:}]//[^\n]*')
+    comment_pattern = re.compile(r'/\*[\s\S]*?\*/|[^:]//[^\n]*')
     comments = []
     
     def comment_placeholder(match):
@@ -81,12 +81,14 @@ def restore_comments(refactored_code, comments):
         refactored_code = refactored_code.replace(f'/*COMMENT{i}*/', comment, 1)
     return refactored_code
 
-def extract_and_refactor_methods(file_path, prompt_text):
+def extract_and_refactor_methods(file_path, prompt_text, connection):
+    """Extracts and refactors methods from a Java file using the given prompt and connection."""
     with open(file_path, 'r', encoding='utf-8') as f:
         java_code = f.read()
 
-
+    
     # Step 1: Remove comments temporarily to avoid `{}` inside comments affecting extraction
+    java_code = java_code.replace("//", " // ")  # Ensure `//` comments are separated by spaces
     stripped_code, comments = remove_comments_from_code(java_code)
 
     # Step 2: Updated regex to correctly handle return types, generics (`<>`), and exclude control statements
@@ -124,7 +126,7 @@ def extract_and_refactor_methods(file_path, prompt_text):
                     brace_count -= 1
                     if brace_count == 0:
                         method_body = stripped_code[start:i + 1]
-                        refactored_method = refactor(method_body, prompt_text)
+                        refactored_method = refactor(method_body, prompt_text, connection)
                         method_bodies[method_body] = refactored_method
                         break
 
@@ -139,6 +141,7 @@ def extract_and_refactor_methods(file_path, prompt_text):
 
 
 if __name__ == "__main__":
+    connection = create_connection()
     with open(args.prompt, 'r', encoding='utf-8') as prompt_file:
         prompt_text = prompt_file.read()
     for root, dirs, files in os.walk(SRC_DIR):
@@ -156,7 +159,7 @@ if __name__ == "__main__":
                 else:
                     logger.info(f"Refactoring {file_path}.")
                     os.makedirs(os.path.dirname(output_file_path), exist_ok=True)
-                    refactored_code = extract_and_refactor_methods(file_path, prompt_text)
+                    refactored_code = extract_and_refactor_methods(file_path, prompt_text, connection)
                     with open(output_file_path, "w") as output_file:
                         output_file.write(refactored_code)
                         logger.info(f"Refactored code written to: {output_file_path}")
