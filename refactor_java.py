@@ -51,16 +51,10 @@ def refactor(method_code, prompt_text, connection):
         `{input}`
         """
     )
-    logger.debug("----METHOD CODE----")
-    logger.debug(method_code)
-    logger.debug("----/METHOD CODE/----") 
     ai_response = run_chain(prompt, method_code, model_name=MODEL_NAME, connection=connection)
     if ai_response.startswith("```"):
         ai_response = ai_response[7:].strip()
         ai_response = ai_response.rsplit("```", 1)[0].strip()
-    logger.debug("----AI RESPONSE----")
-    logger.debug(ai_response)  
-    logger.debug("----/AI RESPONSE/----")
     return ai_response
 
 def remove_comments_from_code(java_code):
