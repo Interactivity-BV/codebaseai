@@ -1,0 +1,3 @@
+create_docstrings.py:230: unused variable 'dirs' (60% confidence)
+create_readme.py:101: unused variable 'dirs' (60% confidence)
+refactor_java.py:141: unused variable 'dirs' (60% confidence)

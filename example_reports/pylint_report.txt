@@ -1,62 +1,192 @@
-************* Module create_reports
-create_reports.py:13:0: C0301: Line too long (108/100) (line-too-long)
-create_reports.py:14:0: C0301: Line too long (113/100) (line-too-long)
-create_reports.py:15:0: C0301: Line too long (124/100) (line-too-long)
-create_reports.py:16:0: C0301: Line too long (138/100) (line-too-long)
-create_reports.py:55:16: C0303: Trailing whitespace (trailing-whitespace)
-create_reports.py:76:0: C0303: Trailing whitespace (trailing-whitespace)
-create_reports.py:103:47: C0303: Trailing whitespace (trailing-whitespace)
-create_reports.py:149:47: C0303: Trailing whitespace (trailing-whitespace)
-create_reports.py:172:47: C0303: Trailing whitespace (trailing-whitespace)
-create_reports.py:195:97: C0303: Trailing whitespace (trailing-whitespace)
-create_reports.py:215:0: C0304: Final newline missing (missing-final-newline)
-create_reports.py:1:0: C0114: Missing module docstring (missing-module-docstring)
-create_reports.py:62:0: C0116: Missing function or method docstring (missing-function-docstring)
-create_reports.py:79:9: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
-create_reports.py:82:4: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
-create_reports.py:85:0: C0116: Missing function or method docstring (missing-function-docstring)
-create_reports.py:102:9: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
-create_reports.py:105:4: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
-create_reports.py:108:0: C0116: Missing function or method docstring (missing-function-docstring)
-create_reports.py:125:9: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
-create_reports.py:128:4: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
-create_reports.py:131:0: C0116: Missing function or method docstring (missing-function-docstring)
-create_reports.py:148:9: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
-create_reports.py:151:4: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
-create_reports.py:154:0: C0116: Missing function or method docstring (missing-function-docstring)
-create_reports.py:171:9: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
-create_reports.py:174:4: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
-create_reports.py:185:8: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
-create_reports.py:188:17: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
-create_reports.py:200:4: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
-create_reports.py:200:16: W1309: Using an f-string that does not have any interpolated variables (f-string-without-interpolation)
-create_reports.py:207:8: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
-create_reports.py:210:4: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
-create_reports.py:211:4: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
-create_reports.py:5:0: C0411: standard import "os" should be placed before third party imports "langchain_core.prompts.ChatPromptTemplate", "langchain_core.output_parsers.StrOutputParser", "langchain_core.runnables.RunnablePassthrough", "langchain_openai.ChatOpenAI" (wrong-import-order)
-create_reports.py:6:0: C0411: standard import "sys" should be placed before third party imports "langchain_core.prompts.ChatPromptTemplate", "langchain_core.output_parsers.StrOutputParser", "langchain_core.runnables.RunnablePassthrough", "langchain_openai.ChatOpenAI" (wrong-import-order)
-create_reports.py:7:0: C0411: standard import "argparse" should be placed before third party imports "langchain_core.prompts.ChatPromptTemplate", "langchain_core.output_parsers.StrOutputParser", "langchain_core.runnables.RunnablePassthrough", "langchain_openai.ChatOpenAI" (wrong-import-order)
-create_reports.py:8:0: C0411: standard import "logging" should be placed before third party imports "langchain_core.prompts.ChatPromptTemplate", "langchain_core.output_parsers.StrOutputParser", "langchain_core.runnables.RunnablePassthrough", "langchain_openai.ChatOpenAI" (wrong-import-order)
-************* Module analyse_codebase
-analyse_codebase.py:9:0: C0301: Line too long (108/100) (line-too-long)
-analyse_codebase.py:10:0: C0301: Line too long (108/100) (line-too-long)
-analyse_codebase.py:11:0: C0301: Line too long (138/100) (line-too-long)
-analyse_codebase.py:46:0: C0301: Line too long (105/100) (line-too-long)
-analyse_codebase.py:1:0: C0114: Missing module docstring (missing-module-docstring)
-analyse_codebase.py:40:13: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
-analyse_codebase.py:42:8: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
-analyse_codebase.py:46:12: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
-analyse_codebase.py:48:12: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
-analyse_codebase.py:50:12: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
-analyse_codebase.py:89:8: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
-analyse_codebase.py:92:4: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
-analyse_codebase.py:93:4: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
-analyse_codebase.py:100:4: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+************* Module codebase.create_reports
+create_reports.py:2:0: C0301: Line too long (118/100) (line-too-long)
+create_reports.py:3:0: C0301: Line too long (115/100) (line-too-long)
+create_reports.py:16:0: C0301: Line too long (108/100) (line-too-long)
+create_reports.py:17:0: C0301: Line too long (113/100) (line-too-long)
+create_reports.py:18:0: C0301: Line too long (124/100) (line-too-long)
+create_reports.py:70:0: C0303: Trailing whitespace (trailing-whitespace)
+create_reports.py:109:47: C0303: Trailing whitespace (trailing-whitespace)
+create_reports.py:179:47: C0303: Trailing whitespace (trailing-whitespace)
+create_reports.py:214:47: C0303: Trailing whitespace (trailing-whitespace)
+create_reports.py:241:97: C0303: Trailing whitespace (trailing-whitespace)
+create_reports.py:265:0: C0304: Final newline missing (missing-final-newline)
+create_reports.py:13:0: E0401: Unable to import 'ai' (import-error)
+create_reports.py:73:9: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+create_reports.py:76:4: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+create_reports.py:108:9: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+create_reports.py:111:4: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+create_reports.py:143:9: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+create_reports.py:146:4: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+create_reports.py:178:9: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+create_reports.py:181:4: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+create_reports.py:213:9: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+create_reports.py:216:4: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+create_reports.py:231:8: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+create_reports.py:234:17: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+create_reports.py:246:4: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+create_reports.py:246:16: W1309: Using an f-string that does not have any interpolated variables (f-string-without-interpolation)
+create_reports.py:257:8: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+create_reports.py:260:4: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+create_reports.py:261:4: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+create_reports.py:9:0: C0411: standard import "os" should be placed before third party import "langchain_core.prompts.ChatPromptTemplate" (wrong-import-order)
+create_reports.py:10:0: C0411: standard import "sys" should be placed before third party import "langchain_core.prompts.ChatPromptTemplate" (wrong-import-order)
+create_reports.py:11:0: C0411: standard import "argparse" should be placed before third party import "langchain_core.prompts.ChatPromptTemplate" (wrong-import-order)
+create_reports.py:12:0: C0411: standard import "logging" should be placed before third party import "langchain_core.prompts.ChatPromptTemplate" (wrong-import-order)
+************* Module codebase.create_docstrings
+create_docstrings.py:2:0: C0301: Line too long (102/100) (line-too-long)
+create_docstrings.py:3:0: C0301: Line too long (101/100) (line-too-long)
+create_docstrings.py:20:0: C0301: Line too long (108/100) (line-too-long)
+create_docstrings.py:21:0: C0301: Line too long (123/100) (line-too-long)
+create_docstrings.py:22:0: C0301: Line too long (108/100) (line-too-long)
+create_docstrings.py:23:0: C0301: Line too long (107/100) (line-too-long)
+create_docstrings.py:27:0: C0301: Line too long (127/100) (line-too-long)
+create_docstrings.py:30:0: C0301: Line too long (119/100) (line-too-long)
+create_docstrings.py:108:0: C0301: Line too long (106/100) (line-too-long)
+create_docstrings.py:154:0: C0303: Trailing whitespace (trailing-whitespace)
+create_docstrings.py:186:0: C0303: Trailing whitespace (trailing-whitespace)
+create_docstrings.py:204:0: C0301: Line too long (134/100) (line-too-long)
+create_docstrings.py:13:0: E0401: Unable to import 'commands' (import-error)
+create_docstrings.py:15:0: E0401: Unable to import 'ai' (import-error)
+create_docstrings.py:46:4: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+create_docstrings.py:50:4: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+create_docstrings.py:50:19: W1309: Using an f-string that does not have any interpolated variables (f-string-without-interpolation)
+create_docstrings.py:108:4: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
+create_docstrings.py:109:8: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+create_docstrings.py:112:8: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+create_docstrings.py:115:9: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+create_docstrings.py:118:13: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+create_docstrings.py:125:8: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+create_docstrings.py:127:8: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+create_docstrings.py:157:9: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+create_docstrings.py:160:4: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+create_docstrings.py:189:9: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+create_docstrings.py:192:4: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+create_docstrings.py:206:9: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+create_docstrings.py:208:4: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+create_docstrings.py:224:8: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+create_docstrings.py:228:8: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+create_docstrings.py:229:8: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+create_docstrings.py:239:13: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+create_docstrings.py:246:8: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+create_docstrings.py:230:18: W0612: Unused variable 'dirs' (unused-variable)
+create_docstrings.py:14:0: C0411: standard import "logging" should be placed before first party import "commands.run_command"  (wrong-import-order)
+create_docstrings.py:16:0: C0411: third party import "langchain_core.prompts.ChatPromptTemplate" should be placed before first party imports "commands.run_command", "ai.run_chain"  (wrong-import-order)
+create_docstrings.py:17:0: C0411: standard import "json" should be placed before third party import "langchain_core.prompts.ChatPromptTemplate" and first party imports "commands.run_command", "ai.run_chain"  (wrong-import-order)
+************* Module codebase.ai
+ai.py:2:0: C0301: Line too long (131/100) (line-too-long)
+ai.py:3:0: C0301: Line too long (128/100) (line-too-long)
+ai.py:40:0: C0301: Line too long (101/100) (line-too-long)
+ai.py:74:20: C0303: Trailing whitespace (trailing-whitespace)
+ai.py:82:0: C0304: Final newline missing (missing-final-newline)
+ai.py:39:0: C0116: Missing function or method docstring (missing-function-docstring)
+ai.py:79:11: W0718: Catching too general exception Exception (broad-exception-caught)
+ai.py:68:12: C0103: Variable name "llmOpenAI" doesn't conform to snake_case naming style (invalid-name)
+ai.py:70:12: C0103: Variable name "llmOpenAI" doesn't conform to snake_case naming style (invalid-name)
+ai.py:80:8: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+ai.py:81:8: W0104: Statement seems to have no effect (pointless-statement)
+ai.py:42:34: W0613: Unused argument 'model_name' (unused-argument)
+ai.py:24:0: C0411: standard import "sys" should be placed before third party imports "langchain_core.output_parsers.StrOutputParser", "langchain_core.runnables.RunnablePassthrough", "langchain_openai.ChatOpenAI" (wrong-import-order)
+ai.py:25:0: C0411: standard import "os" should be placed before third party imports "langchain_core.output_parsers.StrOutputParser", "langchain_core.runnables.RunnablePassthrough", "langchain_openai.ChatOpenAI" (wrong-import-order)
+ai.py:26:0: C0411: standard import "logging" should be placed before third party imports "langchain_core.output_parsers.StrOutputParser", "langchain_core.runnables.RunnablePassthrough", "langchain_openai.ChatOpenAI" (wrong-import-order)
+************* Module codebase.refactor_java
+refactor_java.py:4:15: C0303: Trailing whitespace (trailing-whitespace)
+refactor_java.py:12:0: C0301: Line too long (105/100) (line-too-long)
+refactor_java.py:13:0: C0301: Line too long (115/100) (line-too-long)
+refactor_java.py:16:101: C0303: Trailing whitespace (trailing-whitespace)
+refactor_java.py:16:0: C0301: Line too long (101/100) (line-too-long)
+refactor_java.py:64:0: C0303: Trailing whitespace (trailing-whitespace)
+refactor_java.py:68:0: C0303: Trailing whitespace (trailing-whitespace)
+refactor_java.py:83:0: C0303: Trailing whitespace (trailing-whitespace)
+refactor_java.py:88:0: C0301: Line too long (109/100) (line-too-long)
+refactor_java.py:91:0: C0301: Line too long (112/100) (line-too-long)
+refactor_java.py:92:0: C0301: Line too long (103/100) (line-too-long)
+refactor_java.py:100:0: C0303: Trailing whitespace (trailing-whitespace)
+refactor_java.py:147:51: C0303: Trailing whitespace (trailing-whitespace)
+refactor_java.py:148:0: C0301: Line too long (101/100) (line-too-long)
+refactor_java.py:151:0: C0301: Line too long (121/100) (line-too-long)
+refactor_java.py:152:0: C0301: Line too long (101/100) (line-too-long)
+refactor_java.py:156:0: C0301: Line too long (102/100) (line-too-long)
+refactor_java.py:161:41: C0303: Trailing whitespace (trailing-whitespace)
+refactor_java.py:167:0: C0305: Trailing newlines (trailing-newlines)
+refactor_java.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+refactor_java.py:6:0: E0401: Unable to import 'ai' (import-error)
+refactor_java.py:7:0: E0401: Unable to import 'commands' (import-error)
+refactor_java.py:32:4: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+refactor_java.py:47:0: C0116: Missing function or method docstring (missing-function-docstring)
+refactor_java.py:47:26: W0621: Redefining name 'prompt_text' from outer scope (line 140) (redefined-outer-name)
+refactor_java.py:47:39: W0621: Redefining name 'connection' from outer scope (line 138) (redefined-outer-name)
+refactor_java.py:72:21: W0621: Redefining name 'refactored_code' from outer scope (line 156) (redefined-outer-name)
+refactor_java.py:78:0: R0914: Too many local variables (20/15) (too-many-locals)
+refactor_java.py:78:33: W0621: Redefining name 'file_path' from outer scope (line 144) (redefined-outer-name)
+refactor_java.py:78:44: W0621: Redefining name 'prompt_text' from outer scope (line 140) (redefined-outer-name)
+refactor_java.py:78:57: W0621: Redefining name 'connection' from outer scope (line 138) (redefined-outer-name)
+refactor_java.py:102:4: W0621: Redefining name 'refactored_code' from outer scope (line 156) (redefined-outer-name)
+refactor_java.py:148:20: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+refactor_java.py:152:20: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+refactor_java.py:154:20: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+refactor_java.py:157:25: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+refactor_java.py:159:24: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+refactor_java.py:8:0: C0411: third party import "langchain_core.prompts.ChatPromptTemplate" should be placed before first party imports "ai.run_chain", "commands.run_command"  (wrong-import-order)
+************* Module codebase.create_readme
+create_readme.py:9:0: C0301: Line too long (116/100) (line-too-long)
+create_readme.py:10:0: C0301: Line too long (123/100) (line-too-long)
+create_readme.py:12:0: C0301: Line too long (107/100) (line-too-long)
+create_readme.py:100:0: C0303: Trailing whitespace (trailing-whitespace)
+create_readme.py:106:0: C0301: Line too long (139/100) (line-too-long)
+create_readme.py:109:0: C0301: Line too long (142/100) (line-too-long)
+create_readme.py:113:0: C0301: Line too long (164/100) (line-too-long)
+create_readme.py:119:0: C0301: Line too long (156/100) (line-too-long)
+create_readme.py:122:0: C0301: Line too long (148/100) (line-too-long)
+create_readme.py:129:0: C0304: Final newline missing (missing-final-newline)
+create_readme.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+create_readme.py:5:0: E0401: Unable to import 'ai' (import-error)
+create_readme.py:30:4: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+create_readme.py:34:4: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+create_readme.py:34:19: W1309: Using an f-string that does not have any interpolated variables (f-string-without-interpolation)
+create_readme.py:49:0: C0116: Missing function or method docstring (missing-function-docstring)
+create_readme.py:49:18: W0622: Redefining built-in 'input' (redefined-builtin)
+create_readme.py:81:13: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+create_readme.py:83:8: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+create_readme.py:89:0: C0116: Missing function or method docstring (missing-function-docstring)
+create_readme.py:92:8: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+create_readme.py:95:4: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+create_readme.py:96:4: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+create_readme.py:105:21: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+create_readme.py:106:34: W1309: Using an f-string that does not have any interpolated variables (f-string-without-interpolation)
+create_readme.py:106:95: W1309: Using an f-string that does not have any interpolated variables (f-string-without-interpolation)
+create_readme.py:108:21: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+create_readme.py:112:21: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+create_readme.py:116:21: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+create_readme.py:121:21: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+create_readme.py:101:14: W0612: Unused variable 'dirs' (unused-variable)
+create_readme.py:6:0: C0411: third party import "langchain_core.prompts.ChatPromptTemplate" should be placed before first party import "ai.run_chain"  (wrong-import-order)
+************* Module codebase.commands
+commands.py:2:0: C0301: Line too long (118/100) (line-too-long)
+commands.py:4:0: C0301: Line too long (120/100) (line-too-long)
+commands.py:5:0: C0301: Line too long (119/100) (line-too-long)
+commands.py:28:0: C0301: Line too long (102/100) (line-too-long)
+commands.py:31:0: C0301: Line too long (104/100) (line-too-long)
+commands.py:42:0: C0301: Line too long (105/100) (line-too-long)
+commands.py:35:17: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+************* Module codebase.analyse_codebase
+analyse_codebase.py:2:0: C0301: Line too long (108/100) (line-too-long)
+analyse_codebase.py:3:0: C0301: Line too long (106/100) (line-too-long)
+analyse_codebase.py:15:0: C0301: Line too long (108/100) (line-too-long)
+analyse_codebase.py:16:0: C0301: Line too long (108/100) (line-too-long)
+analyse_codebase.py:109:0: C0304: Final newline missing (missing-final-newline)
+analyse_codebase.py:11:0: E0401: Unable to import 'commands' (import-error)
+analyse_codebase.py:95:8: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+analyse_codebase.py:98:4: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+analyse_codebase.py:99:4: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+analyse_codebase.py:106:4: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
 analyse_codebase.py:1:0: R0801: Similar lines in 2 files
-==analyse_codebase:[16:26]
-==create_reports:[21:30]
+==codebase.create_docstrings:[31:53]
+==codebase.create_readme:[15:37]
+args = parser.parse_args()
+
+# Configure logging
 logging.basicConfig(
-    filename=os.path.join(os.path.dirname(__file__), args.log_file),
+    filename=args.log_file,
     level=logging.DEBUG,
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
@@ -64,8 +194,91 @@ logging.basicConfig(
 # Create a logger object
 logger = logging.getLogger(__name__)
 
-# Define the codebase directory to analyze and the output directory (duplicate-code)
+CODEBASE_DIR = args.codebase_dir
+if not os.path.exists(CODEBASE_DIR):
+    logger.error(f"Error: Directory {CODEBASE_DIR} does not exist.")
+    sys.exit(1)
+if CODEBASE_DIR.startswith('/'):
+    CODEBASE_DIR = CODEBASE_DIR[1:]
+    logger.warning(f"Removed leading '/' from codebase (module) directory path.")
+
+if not CODEBASE_DIR.endswith('/'):
+    CODEBASE_DIR += '/' (duplicate-code)
+analyse_codebase.py:1:0: R0801: Similar lines in 2 files
+==codebase.create_readme:[12:27]
+==codebase.create_reports:[18:32]
+parser.add_argument("-l", "--log_file", default='./analysis.log', help="The file to save the log.")
+parser.add_argument("-m", "--model_name", default="gpt-4o", help="OpenAI model name.")
+args = parser.parse_args()
+
+# Configure logging
+logging.basicConfig(
+    filename=args.log_file,
+    level=logging.DEBUG,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+
+# Create a logger object
+logger = logging.getLogger(__name__)
+ (duplicate-code)
+analyse_codebase.py:1:0: R0801: Similar lines in 2 files
+==codebase.create_readme:[15:27]
+==codebase.refactor_java:[16:29]
+args = parser.parse_args()
+
+# Configure logging
+logging.basicConfig(
+    filename=args.log_file,
+    level=logging.DEBUG,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+
+# Create a logger object
+logger = logging.getLogger(__name__)
+
+ (duplicate-code)
+analyse_codebase.py:1:0: R0801: Similar lines in 2 files
+==codebase.create_docstrings:[31:43]
+==codebase.create_reports:[20:32]
+args = parser.parse_args()
+
+# Configure logging
+logging.basicConfig(
+    filename=args.log_file,
+    level=logging.DEBUG,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+
+# Create a logger object
+logger = logging.getLogger(__name__)
+ (duplicate-code)
+analyse_codebase.py:1:0: R0801: Similar lines in 2 files
+==codebase.analyse_codebase:[29:46]
+==codebase.create_reports:[23:32]
+logging.basicConfig(
+    filename=args.log_file,
+    level=logging.DEBUG,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+
+# Create a logger object
+logger = logging.getLogger(__name__)
+ (duplicate-code)
+analyse_codebase.py:1:0: R0801: Similar lines in 2 files
+==codebase.create_reports:[35:56]
+==codebase.refactor_java:[36:47]
+OUTPUT_DIR = args.output_dir
+if not OUTPUT_DIR.endswith('/'):
+    OUTPUT_DIR += '/'
+
+MODEL_NAME = args.model_name
+
+# Ensure output directory exists
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+
+def refactor(method_code, prompt_text, connection): (duplicate-code)
 
 ------------------------------------------------------------------
-Your code has been rated at 6.81/10 (previous run: 5.92/10, +0.89)
+Your code has been rated at 5.65/10 (previous run: 6.08/10, -0.43)
 

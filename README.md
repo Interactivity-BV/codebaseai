@@ -118,6 +118,22 @@ The `create_readme.py` processes Python main files, markdown files and the requi
 python codebase/create_readme.py -t "Title of the repository" -o codebase/README.md -c codebase
 ```
 
+## Java-code refactoring
+
+The `refactor_java.py` extracts Java-methods from Java files and refactors them using the prompt in `refactoring_prompt.txt`. You can change the prompt
+based on the type of refactoring you need, for example because an API changed or methods used are depricated. 
+The example prompt provides the instructions to rewrite methods using the Neo4J API 3.5 to the Neo4J API 5.5, which has different ways of handling 
+transactions.
+
+It is not a silver bullet, but it will save you a lot of time doing silly stuff. However:
+
+- The refactoring is done on methods. Hence any imports etc will not be fixed
+- Each method is processed separately: any higher-level refactoring will not be taken into account 
+
+```bash
+python3 codebase/refactor_java.py -j ~/git/my_java_app -o refactered_my_java_app -p codebase/refactoring_prompt.txt
+```
+
 ## Contribution
 
 Contributions are welcome! Feel free to submit issues or pull requests to improve the project.

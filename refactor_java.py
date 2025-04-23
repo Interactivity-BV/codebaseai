@@ -1,11 +1,18 @@
 import re
 import sys
 import logging
-import argparse 
+import argparse
 import os
 from ai import run_chain, create_connection
 from commands import run_command
 from langchain_core.prompts import ChatPromptTemplate
+
+"""
+This script refactors Java code using AI. It processes Java files in a specified directory, 
+removes comments, extracts methods, refactors them using an AI model, and restores comments 
+before saving the refactored code to an output directory. It also logs the process and handles 
+command-line arguments for configuration.
+"""
 
 # Parse command line arguments
 parser = argparse.ArgumentParser(description="Refactor Java code using AI.")
@@ -13,7 +20,7 @@ parser.add_argument("-j", "--java_dir", required=True, help="The Java package(s)
 parser.add_argument("-o", "--output_dir", required=True, help="The directory to store the refactored source code.")
 parser.add_argument("-l", "--log_file", default='./analysis.log', help="The file to save the log.")
 parser.add_argument("-m", "--model_name", default="gpt-4o", help="OpenAI model name.")
-parser.add_argument("-p", "--prompt", default="./refactoring_prompt.txt", help="The refactor prompt")  
+parser.add_argument("-p", "--prompt", default="./refactoring_prompt.txt", help="The refactor prompt")
 args = parser.parse_args()
 
 # Configure logging
@@ -25,7 +32,6 @@ logging.basicConfig(
 
 # Create a logger object
 logger = logging.getLogger(__name__)
-
 
 SRC_DIR = args.java_dir
 if not os.path.exists(SRC_DIR):
@@ -43,8 +49,21 @@ MODEL_NAME = args.model_name
 # Ensure output directory exists
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-
 def refactor(method_code, prompt_text, connection):
+    """
+    Refactors a given method using AI based on a provided prompt.
+
+    Args:
+        method_code (str): The Java method code to be refactored.
+        prompt_text (str): The prompt text to guide the AI refactoring.
+        connection: The connection object for interacting with the AI model.
+
+    Returns:
+        str: The refactored method code.
+
+    Raises:
+        Exception: If the AI response is not in the expected format.
+    """
     prompt = ChatPromptTemplate.from_template(prompt_text + """
                                                           
         Method: 
@@ -58,7 +77,15 @@ def refactor(method_code, prompt_text, connection):
     return ai_response
 
 def remove_comments_from_code(java_code):
-    """Replaces comments with placeholders so they don't interfere with `{` and `}` counting."""
+    """
+    Replaces comments in Java code with placeholders to prevent interference with code parsing.
+
+    Args:
+        java_code (str): The Java code from which comments need to be removed.
+
+    Returns:
+        tuple: A tuple containing the stripped code and a list of comments.
+    """
     comment_pattern = re.compile(r'/\*[\s\S]*?\*/|[^:]//[^\n]*')
     comments = []
     
@@ -70,17 +97,35 @@ def remove_comments_from_code(java_code):
     return stripped_code, comments
 
 def restore_comments(refactored_code, comments):
-    """Restores the original comments after refactoring."""
+    """
+    Restores the original comments in the refactored code.
+
+    Args:
+        refactored_code (str): The refactored Java code with placeholders.
+        comments (list): The list of original comments.
+
+    Returns:
+        str: The refactored code with comments restored.
+    """
     for i, comment in enumerate(comments):
         refactored_code = refactored_code.replace(f'/*COMMENT{i}*/', comment, 1)
     return refactored_code
 
 def extract_and_refactor_methods(file_path, prompt_text, connection):
-    """Extracts and refactors methods from a Java file using the given prompt and connection."""
+    """
+    Extracts methods from a Java file, refactors them using AI, and restores comments.
+
+    Args:
+        file_path (str): The path to the Java file to be refactored.
+        prompt_text (str): The prompt text to guide the AI refactoring.
+        connection: The connection object for interacting with the AI model.
+
+    Returns:
+        str: The refactored Java code with comments restored.
+    """
     with open(file_path, 'r', encoding='utf-8') as f:
         java_code = f.read()
 
-    
     # Step 1: Remove comments temporarily to avoid `{}` inside comments affecting extraction
     java_code = java_code.replace("//", " // ")  # Ensure `//` comments are separated by spaces
     stripped_code, comments = remove_comments_from_code(java_code)
@@ -124,7 +169,6 @@ def extract_and_refactor_methods(file_path, prompt_text, connection):
                         method_bodies[method_body] = refactored_method
                         break
 
-
     # Step 4: Replace old methods with refactored versions in the modified code
     for old_method, new_method in method_bodies.items():
         refactored_code = refactored_code.replace(old_method, new_method)
@@ -132,7 +176,6 @@ def extract_and_refactor_methods(file_path, prompt_text, connection):
     # Step 5: Restore original comments before writing back the file
     refactored_code = restore_comments(refactored_code, comments)
     return refactored_code
-
 
 if __name__ == "__main__":
     connection = create_connection()
@@ -158,10 +201,4 @@ if __name__ == "__main__":
                         output_file.write(refactored_code)
                         logger.info(f"Refactored code written to: {output_file_path}")
                     run_command(f"astyle -n --style=java {output_file_path}", None, logger)
-    logger.info("Refactoring completed.")       
-
-
-
-
-
-
+    logger.info("Refactoring completed.")

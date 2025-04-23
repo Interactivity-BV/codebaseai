@@ -1,18 +1,35 @@
-create_reports.py
-    F 177:0 create_report_with_openai - B (8)
-    F 202:0 main - A (2)
-    F 49:0 run_chain - A (1)
-    F 62:0 create_vulture_report - A (1)
-    F 85:0 create_pylint_report - A (1)
-    F 108:0 create_radon_cc_report - A (1)
-    F 131:0 create_radon_mi_report - A (1)
-    F 154:0 create_full_report - A (1)
-analyse_codebase.py
-    F 35:0 run_command - A (4)
+/home/sven/git/codebase/create_reports.py
+    F 219:0 create_report_with_openai - B (8)
+    F 248:0 main - A (2)
+    F 44:0 create_vulture_report - A (1)
+    F 79:0 create_pylint_report - A (1)
+    F 114:0 create_radon_cc_report - A (1)
+    F 149:0 create_radon_mi_report - A (1)
+    F 184:0 create_full_report - A (1)
+/home/sven/git/codebase/create_docstrings.py
+    F 212:0 main - B (7)
+    F 71:0 create_docstrings - A (5)
+    F 130:0 create_mdocs_report - A (1)
+    F 163:0 create_mdocs_onboarding - A (1)
+    F 195:0 process_mdocs - A (1)
+/home/sven/git/codebase/ai.py
+    F 42:0 run_chain - A (3)
+    F 39:0 create_connection - A (1)
+/home/sven/git/codebase/refactor_java.py
+    F 78:0 extract_and_refactor_methods - C (12)
+    F 47:0 refactor - A (2)
+    F 72:0 restore_comments - A (2)
+    F 60:0 remove_comments_from_code - A (1)
+/home/sven/git/codebase/create_readme.py
+    F 89:0 main - C (11)
+    F 49:0 create_readme - A (4)
+/home/sven/git/codebase/commands.py
+    F 11:0 run_command - A (5)
+/home/sven/git/codebase/analyse_codebase.py
     F 84:0 main - A (2)
-    F 52:0 analyze_with_vulture - A (1)
-    F 61:0 analyze_with_pylint - A (1)
-    F 70:0 analyze_with_radon - A (1)
+    F 39:0 analyze_with_vulture - A (1)
+    F 52:0 analyze_with_pylint - A (1)
+    F 65:0 analyze_with_radon - A (1)
 
-13 blocks (classes, functions, methods) analyzed.
-Average complexity: A (1.9230769230769231)
+25 blocks (classes, functions, methods) analyzed.
+Average complexity: A (3.04)

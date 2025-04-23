@@ -5,6 +5,11 @@ import logging
 from ai import run_chain
 from langchain_core.prompts import ChatPromptTemplate
 
+"""
+This script analyzes a codebase and creates or updates a README.md file using AI. 
+It extracts information from various files in the codebase and uses an AI model to generate a comprehensive README.md.
+"""
+
 # Parse command line arguments
 parser = argparse.ArgumentParser(description="Create / update README based on the analysis of a codebase using AI.")
 parser.add_argument("-c", "--codebase_dir", required=True, help="The directory of the codebase (module level) to analyze.")
@@ -39,7 +44,6 @@ OUTPUT_DOC = args.output
 if not "README.md" in OUTPUT_DOC:
     OUTPUT_DOC += '/README.md'
 
-
 TITLE = args.title
 MODEL_NAME = args.model_name
 
@@ -47,6 +51,22 @@ MODEL_NAME = args.model_name
 os.makedirs(os.path.dirname(OUTPUT_DOC), exist_ok=True)
 
 def create_readme(input):
+    """
+    Generates or updates a README.md file based on the provided input using an AI model.
+
+    Args:
+        input (str): The input text containing information extracted from the codebase.
+
+    Returns:
+        str: The AI-generated README.md content.
+
+    Side Effects:
+        - Writes the generated README.md content to the specified output file.
+        - Logs the success or failure of the README.md creation.
+
+    Raises:
+        - Logs an error if the AI response is empty.
+    """
     prompt = ChatPromptTemplate.from_template("""
     A README.md serves as the main entry point for users and developers to understand and use the project. It should be clear, structured, and 
     informative.
@@ -85,9 +105,14 @@ def create_readme(input):
         logger.error("AI response was empty file")
     return ai_response
 
-
 def main():
+    """
+    Main function to analyze the codebase and generate or update the README.md file.
 
+    Side Effects:
+        - Logs the analysis process and any errors encountered.
+        - Calls the create_readme function to generate the README.md content.
+    """
     if not os.path.exists(CODEBASE_DIR):
         logger.error(f"Error: Directory {CODEBASE_DIR} does not exist.")
         sys.exit(1)
