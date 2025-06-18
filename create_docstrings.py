@@ -17,7 +17,7 @@ from langchain_core.prompts import ChatPromptTemplate
 import json
 from pathlib import Path
 
-from _init_codebaseai_ import LLM, LLM_MODEL, initialize_logger, load_run_chain, get_directory_path_or_exit, get_model_name
+from _init_codebaseai_ import LLM, initialize_logger, load_run_chain, get_directory_path_or_exit, get_model_name
 
 # Parse command line arguments
 parser = argparse.ArgumentParser(description="Create reports based on the analysis of a codebase using AI.")
