@@ -10,14 +10,11 @@ import os
 import sys
 import argparse
 import re
-
 from commands import run_command
 import logging
+from ai import run_chain
 from langchain_core.prompts import ChatPromptTemplate
 import json
-from pathlib import Path
-
-from _init_codebaseai_ import LLM, initialize_logger, load_run_chain, get_directory_path_or_exit, get_model_name
 
 # Parse command line arguments
 parser = argparse.ArgumentParser(description="Create reports based on the analysis of a codebase using AI.")
@@ -29,33 +26,47 @@ parser.add_argument("-e", "--email", default="", help="E-mail address")
 parser.add_argument("-u", "--url", default="", help="URL of the website / repository")
 parser.add_argument("-D", "--description", default="AI-generated documentation", help="Short description on the documentation")
 parser.add_argument("-l", "--log_file", default='./analysis.log', help="The file to save the log.")
-parser.add_argument("-L", "--log_level", default='INFO', help="The loglevel.")
-parser.add_argument("-S", "--log_silent", help="Suppress the log to stdout.", action='store_false')
-parser.add_argument("-m", "--model_name", default="", help="default model name.")
-parser.add_argument("-M", "--llm_name", default=LLM, help="default lmm.")
+parser.add_argument("-m", "--model_name", default="gpt-4o", help="OpenAI model name.")
 parser.add_argument("-P", "--python", default="T", help="Create also docstrings, not only create markdown files (T/F)")
+
 args = parser.parse_args()
 
-#initialize logger
-initialize_logger(args.log_file, args.log_level,args.log_silent)
+# Configure logging
+logging.basicConfig(
+    filename=args.log_file,
+    level=logging.DEBUG,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+
+# Create a logger object
 logger = logging.getLogger(__name__)
 
-run_chain = load_run_chain(args.llm_name)
-CODEBASE_DIR = get_directory_path_or_exit(args.codebase_dir)
-OUTPUT_DIR = get_directory_path_or_exit(args.output_dir, create_if_not_exists=True)
-OUTPUT_CODE = Path(os.path.join(OUTPUT_DIR, os.path.basename(os.path.abspath(CODEBASE_DIR))))
-OUTPUT_DOCS = Path(os.path.join(OUTPUT_CODE,"docs"))
+CODEBASE_DIR = args.codebase_dir
+if not os.path.exists(CODEBASE_DIR):
+    logger.error(f"Error: Directory {CODEBASE_DIR} does not exist.")
+    sys.exit(1)
+if CODEBASE_DIR.startswith('/'):
+    CODEBASE_DIR = CODEBASE_DIR[1:]
+    logger.warning(f"Removed leading '/' from codebase (module) directory path.")
 
-# Ensure output directory exists
-os.makedirs(OUTPUT_DOCS, exist_ok=True)
+if not CODEBASE_DIR.endswith('/'):
+    CODEBASE_DIR += '/'
+OUTPUT_DIR = args.output_dir
+if not OUTPUT_DIR.endswith('/'):
+    OUTPUT_DIR += '/'
+
+OUTPUT_DOCS = OUTPUT_DIR + CODEBASE_DIR + "/docs/"
 
 TITLE = args.title
 DEVELOPER = args.developer
 MAIL = args.email
 LINK = args.url
 DESCRIPTION = args.description
-MODEL_NAME = get_model_name(args.llm_name, args.model_name)
+MODEL_NAME = args.model_name
 
+# Ensure output directory exists
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+os.makedirs(OUTPUT_DOCS, exist_ok=True)
 
 def create_docstrings(script):
     """
@@ -91,42 +102,30 @@ def create_docstrings(script):
         """
     )
 
-    output_file_path = OUTPUT_CODE / str(os.path.relpath(script, CODEBASE_DIR))
-    logger.info(f"Reading {script} writing {output_file_path}")
+    cleaned_path = re.sub(r"^(\.\./|\.\/)+", "", script)
 
+    output_file_path = os.path.join(OUTPUT_DIR, cleaned_path)
     if os.path.exists(output_file_path) and os.path.getmtime(script) < os.path.getmtime(output_file_path):
         logger.info(f"Skipping {script} as it is not newer than the existing output.")
-        return
+        return ""
     else:
         logger.info(f"Processing {script} to create docstrings.")
-
     ai_response = ""
     os.makedirs(os.path.dirname(output_file_path), exist_ok=True)
     with open(script, "r") as file:
         script = file.read()
+    if len(script.strip()) > 0:
+        with open(output_file_path, "w") as output_file:
+            ai_response = run_chain(prompt, script, MODEL_NAME)
+            if ai_response.startswith("```"):
+                ai_response = ai_response[9:].strip()
+                ai_response = ai_response.rsplit("```", 1)[0].strip()
 
-    if len(script.strip()) == 0:
-        logger.info(f"Skipping empty file: {output_file_path} ")
-        return
-
-    #Try capturing only python
-    RE = re.compile(r"```(?:python)(.*?)```", re.DOTALL | re.IGNORECASE)
-
-    #query llm
-    ai_response = run_chain(prompt, script, MODEL_NAME)
-
-    #capture Python code from response
-    python_ai_response = RE.search(ai_response).group(1)
-
-    #write output file
-    with open(output_file_path, "w") as output_file:
-        if python_ai_response :
-            output_file.write(python_ai_response)
-        else:
-            logger.warn("There was no python block in the ai response, writing the entire response to {output_file}")
             output_file.write(ai_response)
-    logger.info(f"Docstrings created in {output_file_path}")
-
+        logger.info(f"Docstrings created in {output_file_path}")
+    else:
+        logger.info(f"Skipping empty file: {output_file_path} ")
+    return ai_response
 
 def create_mdocs_report(documentation):
     """
@@ -153,7 +152,7 @@ def create_mdocs_report(documentation):
         """
     )
     
-    output_file_path = OUTPUT_DOCS / "documentation_summary_ai.md"
+    output_file_path = os.path.join(OUTPUT_DOCS, "documentation_summary_ai.md")
     ai_response = ""
     with open(output_file_path, "w") as output_file:
         ai_response = run_chain(prompt, documentation, MODEL_NAME)
@@ -185,7 +184,7 @@ def create_mdocs_onboarding(documentation):
         """
     )
     
-    output_file_path = OUTPUT_DOCS / "documentation_onboarding_ai.md"
+    output_file_path = os.path.join(OUTPUT_DOCS, "documentation_onboarding_ai.md")
     ai_response = ""
     with open(output_file_path, "w") as output_file:
         ai_response = run_chain(prompt, documentation, MODEL_NAME)
@@ -203,16 +202,12 @@ def process_mdocs():
         Logs the process of generating the documentation.
     """
     config = {"title": f"{TITLE}", "description": f"{DESCRIPTION}", "developer": f"{DEVELOPER}", "mail": f"{MAIL}", "link": f"{LINK}"}
-    mdocs_settings_path = CODEBASE_DIR /"mdocs_settings.json"
-    logger.info(f"Writing mdocs settings file to {mdocs_settings_path}")
+    mdocs_settings_path = os.path.join(OUTPUT_DIR, "mdocs_settings.json")
     with open(mdocs_settings_path, "w") as settings_file:
         json.dump(config, settings_file, indent=4)
-
-    documentation_path = CODEBASE_DIR / "documentation.md"
-    documentation_target_path = OUTPUT_DOCS / "documentation.md"
-    logger.info(f"mdocs running on {CODEBASE_DIR.resolve()}")
-    run_command(f"cd {CODEBASE_DIR.resolve()} && mdocs .", output_file=None, logger=logger)
-    run_command(f"mv {documentation_path.resolve()} {documentation_target_path.resolve()}", output_file=None, logger=logger)
+    logger.info(f"mdocs running on {OUTPUT_DIR}{CODEBASE_DIR}")
+    run_command(f"mdocs {OUTPUT_DIR}{CODEBASE_DIR}", output_file=None, logger=logger)
+    run_command(f"mv {OUTPUT_DIR}documentation.md {OUTPUT_DOCS}", output_file=None, logger=logger)
 
 def main():
     """
@@ -229,21 +224,17 @@ def main():
         logger.error(f"Error: Directory {CODEBASE_DIR} does not exist.")
         sys.exit(1)
 
-
-    exclude = ['.git', '__pycache__', 'venv', 'node_modules', '.idea', '.vscode', '.pytest_cache', '.mypy_cache', '.env']
     if args.python in ['T', 't']:
         logger.info(f"Analyzing scripts at: {CODEBASE_DIR}")
         logger.info(f"Scripts with docstrings will be saved to: {OUTPUT_DIR}")
-        for root, dirs, files in os.walk(CODEBASE_DIR, topdown=True):
-            dirs[:] = [d for d in dirs if d not in exclude]
+        for root, dirs, files in os.walk(CODEBASE_DIR):
             for file in files:
                 if file.endswith(".py"):
-                    script_path = Path(os.path.join(root, file))
+                    script_path = os.path.join(root, file)
                     create_docstrings(script_path)
-
     logger.info("Creating mdocs file")
     process_mdocs()
-    documentation_path = OUTPUT_DOCS / "documentation.md"
+    documentation_path = os.path.join(OUTPUT_DOCS, "documentation.md")
     if os.path.exists(documentation_path):
         with open(documentation_path, "r") as doc_file:
             documentation = doc_file.read()
