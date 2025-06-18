@@ -9,28 +9,32 @@ import sys
 import argparse
 import logging
 from commands import run_command
-from _init_codebaseai_ import LLM, initialize_logger, get_directory_path_or_exit, get_model_name
-
 
 # Parse command line arguments
 parser = argparse.ArgumentParser(description="Analyze a codebase using various tools.")
 parser.add_argument("-c", "--codebase_dir", required=True, help="The directory of the codebase to analyze.")
 parser.add_argument("-o", "--output_dir", required=True, help="The directory to save the analysis reports.")
 parser.add_argument("-l", "--log_file", default='./analysis.log', help="The file to save the log.")
-parser.add_argument("-L", "--log_level", default='INFO', help="The loglevel.")
-parser.add_argument("-S", "--log_silent", help="Suppress the log to stdout.", action='store_false')
-
 args = parser.parse_args()
 
-#initialize logger
-initialize_logger(args.log_file, args.log_level,args.log_silent)
-logger = logging.getLogger(__name__)
-
-
 # Define the codebase directory to analyze and the output directory
-CODEBASE_DIR = get_directory_path_or_exit(args.codebase_dir)
-OUTPUT_DIR = get_directory_path_or_exit(args.output_dir, create_if_not_exists=True)
+CODEBASE_DIR = args.codebase_dir
+OUTPUT_DIR = args.output_dir
+if not OUTPUT_DIR.endswith('/'):
+    OUTPUT_DIR += '/'
 
+# Ensure output directory exists
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+# Configure logging
+logging.basicConfig(
+    filename=args.log_file,
+    level=logging.DEBUG,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+
+# Create a logger object
+logger = logging.getLogger(__name__)
 
 def analyze_with_vulture():
     """
@@ -41,11 +45,9 @@ def analyze_with_vulture():
         Logs the process of running Vulture.
     """
     logger.info("Running vulture...")
-    output_file = OUTPUT_DIR / "vulture_report.txt"
-    command = f"vulture {CODEBASE_DIR.resolve()}"
-    return_code = run_command(command, output_file, logger)
-    if return_code == 3 :
-        logger.warning("Vulture found unused code")
+    output_file = os.path.join(OUTPUT_DIR, "vulture_report.txt")
+    command = f"vulture {CODEBASE_DIR}"
+    run_command(command, output_file, logger)
 
 def analyze_with_pylint():
     """
@@ -56,8 +58,8 @@ def analyze_with_pylint():
         Logs the process of running Pylint.
     """
     logger.info("Running pylint...")
-    output_file = OUTPUT_DIR / "pylint_report.txt"
-    command = f"pylint {CODEBASE_DIR} --output-format=text --exit-zero "
+    output_file = os.path.join(OUTPUT_DIR, "pylint_report.txt")
+    command = f"pylint {CODEBASE_DIR} --output-format=text"
     run_command(command, output_file, logger)
 
 def analyze_with_radon():
@@ -70,12 +72,12 @@ def analyze_with_radon():
         Logs the process of running Radon.
     """
     logger.info("Running radon cc (Cyclomatic Complexity)...")
-    cc_output = OUTPUT_DIR / "radon_cc_report.txt"
+    cc_output = os.path.join(OUTPUT_DIR, "radon_cc_report.txt")
     command_cc = f"radon cc {CODEBASE_DIR} -a -s"
     run_command(command_cc, cc_output, logger)
 
     logger.info("Running radon mi (Maintainability Index)...")
-    mi_output = OUTPUT_DIR / "radon_mi_report.txt"
+    mi_output = os.path.join(OUTPUT_DIR, "radon_mi_report.txt")
     command_mi = f"radon mi {CODEBASE_DIR} -s"
     run_command(command_mi, mi_output, logger)
 
