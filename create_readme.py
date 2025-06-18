@@ -1,9 +1,10 @@
 import os
-import sys
 import argparse
 import logging
-from ai import run_chain
+from pathlib import Path
 from langchain_core.prompts import ChatPromptTemplate
+from _init_codebaseai_ import LLM, initialize_logger, load_run_chain, get_directory_path_or_exit, get_model_name
+
 
 """
 This script analyzes a codebase and creates or updates a README.md file using AI. 
@@ -16,39 +17,27 @@ parser.add_argument("-c", "--codebase_dir", required=True, help="The directory o
 parser.add_argument("-o", "--output", required=True, help="The location of the README file.")
 parser.add_argument("-t", "--title", default="Repository documentation", help="Title of the documentation")
 parser.add_argument("-l", "--log_file", default='./analysis.log', help="The file to save the log.")
-parser.add_argument("-m", "--model_name", default="gpt-4o", help="OpenAI model name.")
+parser.add_argument("-L", "--log_level", default='INFO', help="The loglevel.")
+parser.add_argument("-S", "--log_silent", help="Suppress the log to stdout.", action='store_false')
+parser.add_argument("-m", "--model_name", default="", help="default model name.")
+parser.add_argument("-M", "--llm_name", default=LLM, help="default lmm.")
 
 args = parser.parse_args()
 
-# Configure logging
-logging.basicConfig(
-    filename=args.log_file,
-    level=logging.DEBUG,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
-
-# Create a logger object
+#initialize logger
+initialize_logger(args.log_file, args.log_level,args.log_silent)
 logger = logging.getLogger(__name__)
 
-CODEBASE_DIR = args.codebase_dir
-if not os.path.exists(CODEBASE_DIR):
-    logger.error(f"Error: Directory {CODEBASE_DIR} does not exist.")
-    sys.exit(1)
-if CODEBASE_DIR.startswith('/'):
-    CODEBASE_DIR = CODEBASE_DIR[1:]
-    logger.warning(f"Removed leading '/' from codebase (module) directory path.")
+run_chain = load_run_chain(args.llm_name)
+CODEBASE_DIR = get_directory_path_or_exit(args.codebase_dir)
+OUTPUT_DOC = Path(args.output)
 
-if not CODEBASE_DIR.endswith('/'):
-    CODEBASE_DIR += '/'
-OUTPUT_DOC = args.output
-if not "README.md" in OUTPUT_DOC:
-    OUTPUT_DOC += '/README.md'
+if not "README.md" in str(OUTPUT_DOC):
+    OUTPUT_DOC /= 'README.md'
 
 TITLE = args.title
-MODEL_NAME = args.model_name
+MODEL_NAME = get_model_name(args.llm_name, args.model_name)
 
-# Ensure output directory exists
-os.makedirs(os.path.dirname(OUTPUT_DOC), exist_ok=True)
 
 def create_readme(input):
     """
@@ -113,17 +102,18 @@ def main():
         - Logs the analysis process and any errors encountered.
         - Calls the create_readme function to generate the README.md content.
     """
-    if not os.path.exists(CODEBASE_DIR):
-        logger.error(f"Error: Directory {CODEBASE_DIR} does not exist.")
-        sys.exit(1)
 
     logger.info(f"Analyzing codebase at: {CODEBASE_DIR}")
     logger.info(f"README.md: {OUTPUT_DOC}")
 
     input_text = f"$$$$$ Title:  {TITLE} $$$$$\n\n"
     readme_text = "$$$$$ NO EXISTING README.md, please create new one $$$$$\n"
- 
-    for root, dirs, files in os.walk(CODEBASE_DIR):
+
+    exclude = ['.git', '__pycache__', 'venv', 'node_modules', '.idea', '.vscode', '.pytest_cache', '.mypy_cache', '.env']
+    for root, dirs, files in os.walk(CODEBASE_DIR,topdown=True):
+
+        dirs[:] = [d for d in dirs if d not in exclude]
+
         for file in files:
             script_path = os.path.join(root, file)
             if file == "README.md":
@@ -146,7 +136,7 @@ def main():
                 with open(script_path, "r") as req_file:
                     input_text += f"\n$$$$$ Requirements file {file} $$$$$\n" + req_file.read() + f"\n$$$$$ End of requirements file {file} $$$$$\n"
 
-    input_text += readme_text
+        input_text += readme_text
 
     create_readme(input_text)
 

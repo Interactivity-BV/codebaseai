@@ -37,10 +37,10 @@ def run_command(command, output_file, logger):
             logger.info(f"Output file generated: {output_file}")
         else:
             subprocess.run(command, shell=True, check=True)
+            return 0
     except subprocess.CalledProcessError as e:
-        if e.returncode == 3:
-            logger.warning(f"Warning: Command '{command}' failed with exit status 3 (Invalid argument).")
-        elif e.returncode == 30:
-            logger.warning(f"Warning: Command '{command}' failed with exit status 30 (Timeout).")
-        else:
+        if e.returncode == 1:
             logger.error(f"Error while running command: {command}\n{e}")
+        else:
+            logger.warning(f"Warning: Command '{command}' ended with exit code {e.returncode}.")
+        return e.returncode
