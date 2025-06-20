@@ -22,23 +22,40 @@ Functions:
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
 from langchain_ollama.llms import OllamaLLM
+from langchain_ollama import ChatOllama
 import sys
 import os
 import logging
 from dotenv import load_dotenv
 
-load_dotenv()
 
 # Create a logger object
 logger = logging.getLogger(__name__)
 
-OLLAMA_MODEL_NAME = os.getenv("OLLAMA_MODEL_NAME")
-if not OLLAMA_MODEL_NAME:
-    logger.error("OLLAMA_MODEL_NAME name not found. Please set the OLLAMA_MODEL_NAME environment variable.")
-    sys.exit(1)
+
+def create_connection(model_name):
+    """
+    Establishes a connection to the OpenAI API using the specified model.
+
+    Args:
+        model_name (str): The name of the OpenAI model to use. Defaults to "gpt-4o".
+
+    Returns:
+        ChatOpenAI: An instance of the ChatOpenAI class configured with the specified model and API key.
+
+    Raises:
+        None
+
+    Side Effects:
+        None
+
+    Future Work:
+        - Consider allowing more configuration options for the connection.
+    """
+    return ChatOllama(temperature=0.1, model=model_name)
 
 
-def run_chain(prompt, input_data, model_name=OLLAMA_MODEL_NAME, connection=None):
+def run_chain(prompt, input_data, model_name, connection=None):
     """
     Executes a chain of runnables to process input data and generate an AI response.
 
