@@ -1,8 +1,10 @@
+import os
 import argparse
 import logging
-import pathlib
-import codebaseai
-from common import setup_logger, get_path, for_each_file
+from pathlib import Path
+from langchain_core.prompts import ChatPromptTemplate
+from _init_codebaseai_ import LLM, initialize_logger, load_run_chain, get_directory_path_or_exit, get_model_name
+
 
 """
 This script analyzes a codebase and creates or updates a README.md file using AI. 
@@ -18,13 +20,79 @@ parser.add_argument("-l", "--log_file", default='./analysis.log', help="The file
 parser.add_argument("-L", "--log_level", default='INFO', help="The loglevel.")
 parser.add_argument("-S", "--log_silent", help="Suppress the log to stdout.", action='store_false')
 parser.add_argument("-m", "--model_name", default="", help="default model name.")
-parser.add_argument("-M", "--llm_name", default="", help="default lmm.")
+parser.add_argument("-M", "--llm_name", default=LLM, help="default lmm.")
 
 args = parser.parse_args()
 
 #initialize logger
+initialize_logger(args.log_file, args.log_level,args.log_silent)
 logger = logging.getLogger(__name__)
-setup_logger(args.log_file, args.log_level,args.log_silent)
+
+run_chain = load_run_chain(args.llm_name)
+CODEBASE_DIR = get_directory_path_or_exit(args.codebase_dir)
+OUTPUT_DOC = Path(args.output)
+
+if not "README.md" in str(OUTPUT_DOC):
+    OUTPUT_DOC /= 'README.md'
+
+TITLE = args.title
+MODEL_NAME = get_model_name(args.llm_name, args.model_name)
+
+
+def create_readme(input):
+    """
+    Generates or updates a README.md file based on the provided input using an AI model.
+
+    Args:
+        input (str): The input text containing information extracted from the codebase.
+
+    Returns:
+        str: The AI-generated README.md content.
+
+    Side Effects:
+        - Writes the generated README.md content to the specified output file.
+        - Logs the success or failure of the README.md creation.
+
+    Raises:
+        - Logs an error if the AI response is empty.
+    """
+    prompt = ChatPromptTemplate.from_template("""
+    A README.md serves as the main entry point for users and developers to understand and use the project. It should be clear, structured, and 
+    informative.
+
+    Please provide the README.md for the project. If the project already has a README.md, please update it: add and correct it when necessary. 
+    Keep information present in the README when still relevant, and remove or update outdated information. Feel free to add links and additional 
+    sections which you think are missing from the README. Suggestions for sections include: 
+    - Project Title & Description
+    - Installation Instructions
+    - Usage Guide
+    - Features
+    - Modules Overview
+    - Configuration & Customization
+    - Testing & Debugging
+    - Contributing Guide (for open-source projects)
+    - License & Author Information
+    
+    The files you can use as a reference are listed below, using $$$$$ as a separator:
+    
+    {input}
+        """
+    )
+
+    ai_response = ""
+    ai_response = run_chain(prompt, input, MODEL_NAME)
+    if ai_response.startswith("```"):
+        ai_response = ai_response[9:].strip()
+    if ai_response.endswith("```"):
+        ai_response = ai_response[:-3]
+
+    if len(ai_response.strip()) > 0:
+        with open(OUTPUT_DOC, "w") as output_file:
+            output_file.write(ai_response)
+        logger.info(f"README.md created in {OUTPUT_DOC}")
+    else:
+        logger.error("AI response was empty file")
+    return ai_response
 
 def main():
     """
@@ -34,18 +102,6 @@ def main():
         - Logs the analysis process and any errors encountered.
         - Calls the create_readme function to generate the README.md content.
     """
-    CODEBASE_DIR = get_path(args.codebase_dir)
-    OUTPUT_DOC = pathlib.Path(args.output)
-    TITLE = args.title
-
-    if not "README.md" in str(OUTPUT_DOC):
-        OUTPUT_DOC /= 'README.md'
-
-    MODEL_NAME = codebaseai.get_model_name(args.llm_name, args.model_name)
-
-    #initialize ai
-    codebaseai.load_llm(args.llm_name)
-    run_chain = codebaseai.run_chain()
 
     logger.info(f"Analyzing codebase at: {CODEBASE_DIR}")
     logger.info(f"README.md: {OUTPUT_DOC}")
@@ -53,14 +109,19 @@ def main():
     input_text = f"$$$$$ Title:  {TITLE} $$$$$\n\n"
     readme_text = "$$$$$ NO EXISTING README.md, please create new one $$$$$\n"
 
-    for file_path in for_each_file(CODEBASE_DIR):
-        logger.info(f"Processing file: {file_path.name}")
-        if file_path.name == "README.md":
-            with open(file_path, "r") as readme_file:
-                readme_text = f"\n$$$$$ Existing README.md $$$$$\n" + readme_file.read() + f"\n$$$$$ End of existing README.md $$$$$\n"
-        if file_path.name == "LICENSE":
-            with open(file_path, "r") as license_file:
-                input_text += f"\n$$$$$ License file {file_path} $$$$$\n" + license_file.read() + f"\n$$$$$ End of license file {file_path} $$$$$\n"
+    exclude = ['.git', '__pycache__', 'venv', 'node_modules', '.idea', '.vscode', '.pytest_cache', '.mypy_cache', '.env']
+    for root, dirs, files in os.walk(CODEBASE_DIR,topdown=True):
+
+        dirs[:] = [d for d in dirs if d not in exclude]
+
+        for file in files:
+            script_path = os.path.join(root, file)
+            if file == "README.md":
+                with open(script_path, "r") as readme_file:
+                    readme_text = f"\n$$$$$ Existing README.md $$$$$\n" + readme_file.read() + f"\n$$$$$ End of existing README.md $$$$$\n"
+            if file == "LICENSE":
+                with open(script_path, "r") as license_file:
+                    input_text += f"\n$$$$$ License file {file} $$$$$\n" + license_file.read() + f"\n$$$$$ End of license file {file} $$$$$\n"
 
         if file_path.name.endswith(".md") and file_path.name != "README.md":
             with open(file_path, "r") as doc_file:
@@ -75,7 +136,7 @@ def main():
             with open(file_path, "r") as req_file:
                 input_text += f"\n$$$$$ Requirements file {file_path} $$$$$\n" + req_file.read() + f"\n$$$$$ End of requirements file {file_path} $$$$$\n"
 
-        input_text += readme_text
+    input_text += readme_text
 
     codebaseai.create_readme(input_text, OUTPUT_DOC, run_chain, MODEL_NAME)
 

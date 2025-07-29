@@ -1,6 +1,6 @@
 """
-This script is designed to interact with the OpenAI API using a chain of runnables to process input data and generate AI responses.
-It utilizes environment variables for configuration and includes logging for error handling. The script is intended for use with
+This script is designed to interact with the OpenAI API using a chain of runnables to process input data and generate AI responses. 
+It utilizes environment variables for configuration and includes logging for error handling. The script is intended for use with 
 the OpenAI GPT-4 model and requires an API key to function.
 
 Modules:
@@ -21,19 +21,23 @@ Functions:
 
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
-from langchain_ollama.llms import OllamaLLM
-from langchain_ollama import ChatOllama
+from langchain_openai import ChatOpenAI
 import sys
 import os
 import logging
 from dotenv import load_dotenv
 
+load_dotenv()
 
 # Create a logger object
 logger = logging.getLogger(__name__)
 
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+if not OPENAI_API_KEY:
+    logger.error("OpenAI API key not found. Please set the OPENAI_API_KEY environment variable.")
+    sys.exit(1)
 
-def create_connection(model_name):
+def create_connection(model_name="gpt-4o"):
     """
     Establishes a connection to the OpenAI API using the specified model.
 
@@ -52,17 +56,16 @@ def create_connection(model_name):
     Future Work:
         - Consider allowing more configuration options for the connection.
     """
-    return ChatOllama(temperature=0.1, model=model_name)
+    return ChatOpenAI(temperature=0.1, model_name=model_name, streaming=True, api_key=OPENAI_API_KEY)
 
-
-def run_chain(prompt, input_data, model_name, connection=None):
+def run_chain(prompt, input_data, model_name="gpt-4o", connection=None):
     """
     Executes a chain of runnables to process input data and generate an AI response.
 
     Args:
         prompt (ChatPromptTemplate): The prompt template to use for generating the AI response.
         input_data (str): The input data to be processed by the chain.
-        model_name (str): The name of the Ollama model to use. Defaults to environment variable.
+        model_name (str): The name of the OpenAI model to use. Defaults to "gpt-4o".
         connection (ChatOpenAI, optional): An existing connection to the OpenAI API. If not provided, a new connection is created.
 
     Returns:
@@ -81,17 +84,18 @@ def run_chain(prompt, input_data, model_name, connection=None):
     """
     response = ""
     try:
-        model = OllamaLLM(model=model_name)
+        if connection:
+            llmOpenAI = connection
+        else:
+            llmOpenAI = create_connection()
 
         chain = (
             {"input": RunnablePassthrough()}
-            | prompt
-            | model
+            | prompt  
+            | llmOpenAI
             | StrOutputParser()
         )
-        logger.debug(f"Input data to LLM: {prompt.format(input=input_data)}")
         response = chain.invoke(input_data)
-        logger.debug(f"Response from LLM: {response}")
     except Exception as e:
         logger.error(f"Error during large language model execution: {e}")
         sys.exit(1)
